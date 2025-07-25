@@ -1,0 +1,270 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Stock Manager API",
+        "description": "Service for handling stock products and orders",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/orders": {
+            "get": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Elenco ordini",
+                "operationId": "67fbe5e65b783bfc0a2130b28955c825",
+                "responses": {
+                    "200": {
+                        "description": "Lista ordini"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Create new order",
+                "operationId": "e14d7af4c071a7773aef6dbe633af1bd",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateOrderRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Order created successfully"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/ValidationError"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/InvalidArgument"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/ServerError"
+                    }
+                }
+            }
+        },
+        "/orders/{orderId}": {
+            "get": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Visualizza un ordine",
+                "operationId": "e75fb8c791d80455f7716f51ba61ef4d",
+                "parameters": [
+                    {
+                        "name": "orderId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Dettaglio ordine"
+                    },
+                    "404": {
+                        "description": "Ordine non trovato"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Elimina un ordine",
+                "operationId": "903369805a6d667aa47f9d66de11fc84",
+                "parameters": [
+                    {
+                        "name": "orderId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Ordine eliminato"
+                    },
+                    "404": {
+                        "description": "Ordine non trovato"
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Aggiorna un ordine",
+                "operationId": "94e1b7c8fbe94b7792b7e4dcc42b733b",
+                "parameters": [
+                    {
+                        "name": "orderId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "status": {
+                                        "type": "string",
+                                        "example": "shipped"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Ordine aggiornato"
+                    },
+                    "404": {
+                        "description": "Ordine non trovato"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "CreateOrderRequest": {
+                "required": [
+                    "orderItems"
+                ],
+                "properties": {
+                    "orderItems": {
+                        "description": "Array of order items, each containing product ID and quantity",
+                        "type": "array",
+                        "items": {
+                            "type": "array",
+                            "items": {
+                                "oneOf": [
+                                    {
+                                        "description": "Product ULID",
+                                        "type": "string",
+                                        "format": "ulid"
+                                    },
+                                    {
+                                        "description": "Quantity",
+                                        "type": "integer",
+                                        "minimum": 1
+                                    }
+                                ]
+                            },
+                            "maxItems": 2,
+                            "minItems": 2
+                        },
+                        "example": [
+                            [
+                                "01HV5R2K3M4N5P6Q7R8S9T0U1V",
+                                2
+                            ],
+                            [
+                                "01HW6S3L4N5O6P7Q8R9S0T1U2W",
+                                1
+                            ]
+                        ]
+                    },
+                    "notes": {
+                        "description": "Optional notes for the order",
+                        "type": "string",
+                        "example": "Consegna urgente richiesta",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "responses": {
+            "ValidationError": {
+                "description": "Validation error",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "properties": {
+                                "message": {
+                                    "type": "string",
+                                    "example": "Invalid argument provided"
+                                },
+                                "error": {
+                                    "description": "Error Message",
+                                    "type": "strinh"
+                                },
+                                "type": {
+                                    "type": "string",
+                                    "example": "invalid_argument"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "InvalidArgument": {
+                "description": "Invalid argument provided",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "properties": {
+                                "message": {
+                                    "type": "string",
+                                    "example": "The given data was invalid"
+                                },
+                                "error": {
+                                    "type": "string",
+                                    "example": "Product with ID 123 not found"
+                                },
+                                "type": {
+                                    "type": "string",
+                                    "example": "validation_error"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "ServerError": {
+                "description": "Internal server error",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "properties": {
+                                "message": {
+                                    "type": "string",
+                                    "example": "Internal server error"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Orders",
+            "description": "Orders API"
+        }
+    ]
+}

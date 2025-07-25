@@ -1,3 +1,4 @@
 /backend/.editorconfig
 /.idea/phpunit.xml
 /.idea/php.xml
+/.idea/
