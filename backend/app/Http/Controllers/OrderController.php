@@ -5,10 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CreateOrderRequest;
 use App\Http\Requests\DeleteOrderRequest;
 use App\Http\Requests\FindOrderRequest;
+use App\Http\Requests\ListOrdersRequest;
 use App\Http\Requests\UpdateOrderRequest;
+use App\Models\OrderItem;
 use App\UseCases\OrderUseCase;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 /**
  * @OA\Tag(
@@ -33,8 +34,9 @@ class OrderController extends Controller
      *     @OA\Response(response=200, description="Lista ordini")
      * )
      */
-    public function list()
-    { /* ... */
+    public function list(ListOrdersRequest $request): JsonResponse
+    {
+
     }
 
     /**
@@ -48,16 +50,25 @@ class OrderController extends Controller
      *         required=true,
      *         @OA\Schema(type="integer")
      *     ),
-     *     @OA\Response(response=200, description="Dettaglio ordine"),
+     *     @OA\Response(response=200, description="Order Details"),
      *     @OA\Response(response=404, description="Ordine non trovato")
      * )
      */
     public function find(FindOrderRequest $request): JsonResponse
     {
-        $this->orderUseCase->find(
+        $order = $this->orderUseCase->get(
             $request->toDto()
         );
-        //TODO add eloquent models to response
+        if (empty($order)) {
+            return response()->json(
+                ['error' => 'Order not found'],
+                404
+            );
+        }
+        return response()->json(
+            data: $order->toArrayResponse(!empty($request->validated('withDetails')))
+        );
+
     }
 
     /**

@@ -17,7 +17,8 @@ class FindOrderRequest extends StockRequest
     public function rules(): array
     {
         return [
-            'orderId' => ValidationPatterns::ULID_REQUIRED
+            'orderId' => ValidationPatterns::ULID_REQUIRED,
+            'withDetails' => ValidationPatterns::BOOL_NULLABLE,
         ];
     }
 

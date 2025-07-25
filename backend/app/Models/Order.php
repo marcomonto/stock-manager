@@ -34,10 +34,12 @@ class Order extends Model
     protected $casts = [
         'status' => OrderStatus::class
     ];
+
     public function orderItems(): HasMany
     {
         return $this->hasMany(OrderItem::class);
     }
+
     public function products(): BelongsToMany
     {
         return $this->belongsToMany(Product::class, 'order_items')
@@ -48,6 +50,31 @@ class Order extends Model
     public function canBeModified(): bool
     {
         return $this->status != OrderStatus::CANCELLED;
+    }
+
+    public function toArrayResponse(
+        bool $withDetails = false
+    ): array
+    {
+        $orderSerialized = [
+            'id' => $this->id,
+            'notes' => $this->notes,
+            'status' => $this->status->value,
+            'createdAt' => $this->created_at->format('Y-m-d H:i:s'),
+            'updatedAt' => $this->updated_at->format('Y-m-d H:i:s'),
+        ];
+        if ($withDetails) {
+            return [
+                ...$orderSerialized,
+                'orderItems' => $this->orderItems->map(fn(OrderItem $orderItem) => [
+                    'id' => $orderItem->id,
+                    'quantity' => $orderItem->quantity,
+                    'createdAt' => $orderItem->created_at->format('Y-m-d H:i:s'),
+                    'updatedAt' => $orderItem->updated_at->format('Y-m-d H:i:s'),
+                ]),
+            ];
+        }
+        return $orderSerialized;
     }
 
 }

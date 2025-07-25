@@ -80,6 +80,12 @@ class OrderUseCase
         );
     }
 
+    public function get(FindOrderDto $dto): ?Order {
+        return $this->orderService->get(
+            $dto->orderId
+        );
+    }
+
     public function list(): Collection{
 
     }
