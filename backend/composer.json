@@ -2,15 +2,16 @@
     "$schema": "https://getcomposer.org/schema.json",
     "name": "laravel/laravel",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
+    "description": "Stock Manager example app",
     "keywords": [
-        "laravel",
-        "framework"
+        "Stock"
     ],
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "darkaonline/l5-swagger": "^9.0",
         "laravel/framework": "^12.0",
+        "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.10.1"
     },
     "require-dev": {
@@ -20,6 +21,7 @@
         "laravel/sail": "^1.41",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.6",
+        "nunomaduro/larastan": "*",
         "phpunit/phpunit": "^11.5.3"
     },
     "autoload": {
@@ -57,7 +59,9 @@
         "test": [
             "@php artisan config:clear --ansi",
             "@php artisan test"
-        ]
+        ],
+        "lint": "./vendor/bin/pint",
+        "analyse": "./vendor/bin/phpstan analyse ./app --level 10"
     },
     "extra": {
         "laravel": {
