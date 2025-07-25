@@ -2,18 +2,12 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Dtos\DeleteOrderDto;
+use App\Enums\Dtos;
+use App\Utils\ValidationPatterns;
 
-class DeleteOrderRequest extends FormRequest
+class DeleteOrderRequest extends StockRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
-    public function authorize(): bool
-    {
-        return false;
-    }
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -22,7 +16,16 @@ class DeleteOrderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'orderId' => ValidationPatterns::ULID_REQUIRED,
         ];
+    }
+
+    public function toDto(): DeleteOrderDto
+    {
+        /** @var DeleteOrderDto */
+        return $this->dtoFactory->create(
+            Dtos::DeleteOrder,
+            $this->validated()
+        );
     }
 }

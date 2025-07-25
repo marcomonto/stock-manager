@@ -12,6 +12,6 @@ Route::group([
     Route::get('/', 'list')->name('list');
     Route::get('/{orderId}', 'find')->name('find');
     Route::post('/', 'create')->name('create');
-    Route::patch('/{orderId}', 'patch')->name('patch');
+    Route::put('/{orderId}', 'update')->name('update');
     Route::delete('/{orderId}', 'delete')->name('delete');
 });

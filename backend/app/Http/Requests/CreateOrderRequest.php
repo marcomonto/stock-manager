@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+use App\Dtos\CreateOrderDto;
+use App\Dtos\Dto;
 use App\Enums\Dtos;
 use App\Factories\DtoFactory;
 use App\Utils\ValidationPatterns;
@@ -41,15 +43,6 @@ use App\Utils\ValidationPatterns;
  */
 class CreateOrderRequest extends StockRequest
 {
-
-    public function __construct(
-        DtoFactory $dtoFactory,
-    )
-    {
-        $this->associatedDto = Dtos::CreateOrder;
-        parent::__construct($dtoFactory);
-    }
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -66,4 +59,12 @@ class CreateOrderRequest extends StockRequest
         ];
     }
 
+    public function toDto(): CreateOrderDto
+    {
+        /** @var CreateOrderDto */
+        return $this->dtoFactory->create(
+            Dtos::CreateOrder,
+            $this->validated()
+        );
+    }
 }

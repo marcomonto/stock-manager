@@ -42,7 +42,7 @@ class OrderService
             if ($product->stock_quantity < $quantity) {
                 throw new InvalidArgumentException();
             }
-            $product->decrement('quantity', $quantity);
+            $product->decrement('stock_quantity', $quantity);
             $itemsToAttach[$productId] = ['quantity' => $quantity];
         }
         $order = Order::query()
@@ -55,53 +55,52 @@ class OrderService
         return $order;
     }
 
-    /**
-     * @throws \Exception
-     */
-    public function addProduct(
+    public function update(
         Order   $order,
-        Product $product,
-        int     $quantity
-    ): OrderItem
+        array   $orderItems,
+        ?string $notes = null,
+    ): Order
     {
         if (!$order->canBeModified()) {
-            throw new \InvalidArgumentException();
+            throw new InvalidArgumentException("Order cannot be modified in current status");
         }
 
-        if (!$product->isAvailable($quantity)) {
-            throw new \InvalidArgumentException();
-        }
+        $this->_restoreStockForOrderItems($order);
+        $productIds = collect($orderItems)
+            ->pluck(0)
+            ->unique()
+            ->sort()
+            ->values();
 
-        $existingItem = $order
-            ->orderItems()
-            ->where('product_id', $product->id)
-            ->first();
+        $products = Product::query()
+            ->whereIn('id', $productIds)
+            ->orderBy('id')
+            ->lockForUpdate()
+            ->get()
+            ->keyBy('id');
 
-        if ($existingItem) {
-            $newQuantity = $existingItem->quantity + $quantity;
-            if (!$product->isAvailable($newQuantity - $existingItem->quantity)) {
-                throw new \Exception("Stock insufficiente per {$product->name}");
+        $itemsToSync = [];
+
+        foreach ($orderItems as [$productId, $quantity]) {
+            $product = $products->get($productId);
+
+            if (!$product) {
+                throw new InvalidArgumentException("Product {$productId} not found");
             }
-            $existingItem->update(['quantity' => $newQuantity]);
-            return $existingItem;
-        }
 
-        return $product->orderItems()->create([
-            'product_id' => $product->id,
-            'quantity' => $quantity
+            if (!$product->hasStock($quantity)) {
+                throw new InvalidArgumentException("Insufficient stock for product {$productId}");
+            }
+
+            $product->decrement('stock_quantity', $quantity);
+            $itemsToSync[$productId] = ['quantity' => $quantity];
+        }
+        $order->update([
+            'notes' => $notes,
         ]);
-    }
 
-    public function removeProduct(
-        Order   $order,
-        Product $product
-    ): bool
-    {
-        if (!$order->canBeModified()) {
-            throw new InvalidArgumentException();
-        }
-
-        return $order->orderItems()->where('product_id', $product->id)->delete() > 0;
+        $order->products()->sync($itemsToSync);
+        return $order;
     }
 
     public function updateStatus(
@@ -113,27 +112,51 @@ class OrderService
         return $order;
     }
 
-    public function cancel(
-        Order $order,
+    public function delete(
+        string $orderId,
     ): Order
     {
+        $order = $this->find($orderId);
         if ($order->status === OrderStatus::CANCELLED) {
             return $order;
         }
-
-        if (in_array(
-            $order->status,
-            [OrderStatus::PENDING, OrderStatus::PROCESSING])
-        ) {
-            foreach ($order->orderItems as $item) {
-                $item->product->incrementStock($item->quantity);
-            }
-        }
+        $this->_restoreStockForOrderItems($order);
 
         $this->updateStatus(
             $order,
             OrderStatus::CANCELLED
         );
         return $order;
+    }
+
+    public function list(
+        bool $withDetails = false,
+    ){
+
+    }
+
+    public function find(string $id): Order
+    {
+        $order = Order::query()
+            ->where('id', $id)
+            ->first();
+        if (!$order) {
+            throw new InvalidArgumentException("Order {$id} not found");
+        }
+        return $order;
+    }
+
+    public function get(string $id): ?Order
+    {
+        return Order::query()
+            ->where('id', $id)
+            ->first();
+    }
+
+    private function _restoreStockForOrderItems(Order $order): void
+    {
+        foreach ($order->orderItems as $item) {
+            $item->product->increment('stock_quantity', $item->quantity);
+        }
     }
 }

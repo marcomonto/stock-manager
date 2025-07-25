@@ -9,12 +9,10 @@ use Illuminate\Foundation\Http\FormRequest;
 
 abstract class StockRequest extends FormRequest
 {
-    protected Dtos $associatedDto;
-
-    public function __construct(
-        protected DtoFactory $dtoFactory,
-    )
+    protected DtoFactory $dtoFactory;
+    public function __construct()
     {
+        $this->dtoFactory = app(DtoFactory::class);
         parent::__construct();
     }
 
@@ -23,13 +21,6 @@ abstract class StockRequest extends FormRequest
         return true;
     }
 
-    public function toDto(array $data): Dto
-    {
-        return $this->dtoFactory->create(
-            $this->associatedDto,
-            $data
-        );
-    }
-
+    public abstract function toDto(): Dto;
 
 }

@@ -2,18 +2,13 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Dtos\Dto;
+use App\Dtos\FindOrderDto;
+use App\Enums\Dtos;
+use App\Utils\ValidationPatterns;
 
-class FindOrderRequest extends FormRequest
+class FindOrderRequest extends StockRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
-    public function authorize(): bool
-    {
-        return false;
-    }
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -22,7 +17,17 @@ class FindOrderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'orderId' => ValidationPatterns::ULID_REQUIRED
         ];
+    }
+
+    public function toDto(): FindOrderDto
+    {
+        /** @var FindOrderDto */
+        return $this->dtoFactory
+            ->create(
+                Dtos::FindOrder,
+                $this->validated()
+            );
     }
 }

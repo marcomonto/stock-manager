@@ -2,18 +2,12 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Dtos\UpdateOrderDto;
+use App\Enums\Dtos;
+use App\Utils\ValidationPatterns;
 
-class UpdateOrderRequest extends FormRequest
+class UpdateOrderRequest extends StockRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
-    public function authorize(): bool
-    {
-        return false;
-    }
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -22,7 +16,22 @@ class UpdateOrderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'orderId' => ValidationPatterns::ULID_REQUIRED,
+            'orderItems' => ValidationPatterns::ARRAY_REQUIRED,
+            'orderItems.*' => ValidationPatterns::ARRAY_REQUIRED,
+            'orderItems.*.0' => ValidationPatterns::ULID_REQUIRED,
+            'orderItems.*.1' => ValidationPatterns::INT_REQUIRED_POSITIVE,
+            'notes' => ValidationPatterns::STRING_NULLABLE,
         ];
+    }
+
+    public function toDto(): UpdateOrderDto
+    {
+        /** @var UpdateOrderDto */
+        return $this->dtoFactory
+            ->create(
+                Dtos::UpdateOrder,
+                $this->validated()
+            );
     }
 }
