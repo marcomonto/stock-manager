@@ -5,6 +5,62 @@ namespace App\Http\Requests;
 use App\Dtos\ListOrderDto;
 use App\Utils\ValidationPatterns;
 
+
+/**
+ * @OA\Parameter(
+ *     parameter="ListOrdersPage",
+ *     name="page",
+ *     in="query",
+ *     required=true,
+ *     description="Page number for pagination",
+ *     @OA\Schema(type="integer", minimum=1, example=1)
+ * )
+ *
+ * @OA\Parameter(
+ *     parameter="ListOrdersRowsPerPage",
+ *     name="rowsPerPage",
+ *     in="query",
+ *     required=true,
+ *     description="Number of items per page",
+ *     @OA\Schema(type="integer", minimum=1, maximum=100, example=10)
+ * )
+ *
+ * @OA\Parameter(
+ *     parameter="ListOrdersName",
+ *     name="name",
+ *     in="query",
+ *     required=false,
+ *     description="Filter orders by name (partial match)",
+ *     @OA\Schema(type="string", maxLength=255, example="Urgent delivery")
+ * )
+ *
+ * @OA\Parameter(
+ *     parameter="ListOrdersDescription",
+ *     name="description",
+ *     in="query",
+ *     required=false,
+ *     description="Filter orders by description (partial match)",
+ *     @OA\Schema(type="string", maxLength=255, example="Mr.Rossi")
+ * )
+ *
+ * @OA\Parameter(
+ *     parameter="ListOrdersCreationDate",
+ *     name="creationDate",
+ *     in="query",
+ *     required=false,
+ *     description="Filter orders by creation date",
+ *     @OA\Schema(type="string", format="date", example="2024-01-15")
+ * )
+ *
+ * @OA\Parameter(
+ *     parameter="ListOrdersWithDetails",
+ *     name="withDetails",
+ *     in="query",
+ *     required=false,
+ *     description="Include detailed order information",
+ *     @OA\Schema(type="boolean", example=true)
+ * )
+ */
 class ListOrdersRequest extends StockRequest
 {
     /**

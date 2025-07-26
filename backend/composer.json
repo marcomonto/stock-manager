@@ -59,6 +59,7 @@
         "test": [
             "vendor/bin/phpunit --configuration ./phpunit.xml"
         ],
+        "generate-doc": "php artisan l5-swagger:generate",
         "lint": "./vendor/bin/pint",
         "analyse": "./vendor/bin/phpstan analyse ./app --level 10"
     },

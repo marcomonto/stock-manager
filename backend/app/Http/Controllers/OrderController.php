@@ -24,10 +24,42 @@ class OrderController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/orders",
+     *     path="/api/orders",
      *     tags={"Orders"},
-     *     summary="Elenco ordini",
-     *     @OA\Response(response=200, description="Lista ordini")
+     *     summary="List orders with optional filtering and pagination",
+     *     description="Retrieve a list of orders with optional filters for name, description, creation date and pagination support",
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of orders retrieved successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="array",
+     *                 description="Array of orders",
+     *                 @OA\Items(
+     *                     @OA\Property(property="id", type="string", format="ulid", description="Order ID", example="01HV5R2K3M4N5P6Q7R8S9T0U1V"),
+     *                     @OA\Property(property="name", type="string", description="Order name", example="Urgent delivery"),
+     *                     @OA\Property(property="description", type="string", description="Order description", example="Order for Mr.Rossi in Catanzaro"),
+     *                     @OA\Property(property="status", type="string", description="Order status", example="delivered"),
+     *                     @OA\Property(property="createdAt", type="string", format="date-time", description="Creation timestamp", example="2024-01-15 10:30:00"),
+     *                     @OA\Property(property="updatedAt", type="string", format="date-time", description="Last update timestamp", example="2024-01-15 10:30:00"),
+     *                     @OA\Property(
+     *                         property="orderItems",
+     *                         type="array",
+     *                         description="Order items (included when withDetails=true)",
+     *                         @OA\Items(
+     *                             @OA\Property(property="productId", type="string", format="ulid", description="Product ID", example="01HW6S3L4N5O6P7Q8R9S0T1U2W"),
+     *                             @OA\Property(property="quantity", type="integer", description="Quantity ordered", example=2),
+     *                             @OA\Property(property="productName", type="string", description="Product name", example="Laptop Dell XPS")
+     *                         )
+     *                     )
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=400, ref="#/components/responses/ValidationError"),
+     *     @OA\Response(response=422, ref="#/components/responses/InvalidArgument"),
+     *     @OA\Response(response=500, ref="#/components/responses/ServerError")
      * )
      * @throws \DateMalformedStringException
      */
@@ -48,7 +80,7 @@ class OrderController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/orders/{orderId}",
+     *     path="/api/orders/{orderId}",
      *     tags={"Orders"},
      *     summary="Visualizza un ordine",
      *     @OA\Parameter(
@@ -80,7 +112,7 @@ class OrderController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/orders",
+     *     path="/api/orders",
      *     tags={"Orders"},
      *     summary="Create new order",
      *     @OA\RequestBody(
@@ -107,7 +139,7 @@ class OrderController extends Controller
 
     /**
      * @OA\Patch(
-     *     path="/orders/{orderId}",
+     *     path="/api/orders/{orderId}",
      *     tags={"Orders"},
      *     summary="Aggiorna un ordine",
      *     @OA\Parameter(
@@ -141,7 +173,7 @@ class OrderController extends Controller
 
     /**
      * @OA\Delete(
-     *     path="/orders/{orderId}",
+     *     path="/api/orders/{orderId}",
      *     tags={"Orders"},
      *     summary="Elimina un ordine",
      *     @OA\Parameter(

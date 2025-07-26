@@ -6,16 +6,102 @@
         "version": "1.0.0"
     },
     "paths": {
-        "/orders": {
+        "/api/orders": {
             "get": {
                 "tags": [
                     "Orders"
                 ],
-                "summary": "Elenco ordini",
-                "operationId": "67fbe5e65b783bfc0a2130b28955c825",
+                "summary": "List orders with optional filtering and pagination",
+                "description": "Retrieve a list of orders with optional filters for name, description, creation date and pagination support",
+                "operationId": "cb6496a706b15cae633504c9e360ff08",
                 "responses": {
                     "200": {
-                        "description": "Lista ordini"
+                        "description": "List of orders retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "description": "Array of orders",
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "description": "Order ID",
+                                                        "type": "string",
+                                                        "format": "ulid",
+                                                        "example": "01HV5R2K3M4N5P6Q7R8S9T0U1V"
+                                                    },
+                                                    "name": {
+                                                        "description": "Order name",
+                                                        "type": "string",
+                                                        "example": "Urgent delivery"
+                                                    },
+                                                    "description": {
+                                                        "description": "Order description",
+                                                        "type": "string",
+                                                        "example": "Order for Mr.Rossi in Catanzaro"
+                                                    },
+                                                    "status": {
+                                                        "description": "Order status",
+                                                        "type": "string",
+                                                        "example": "delivered"
+                                                    },
+                                                    "createdAt": {
+                                                        "description": "Creation timestamp",
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2024-01-15 10:30:00"
+                                                    },
+                                                    "updatedAt": {
+                                                        "description": "Last update timestamp",
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2024-01-15 10:30:00"
+                                                    },
+                                                    "orderItems": {
+                                                        "description": "Order items (included when withDetails=true)",
+                                                        "type": "array",
+                                                        "items": {
+                                                            "properties": {
+                                                                "productId": {
+                                                                    "description": "Product ID",
+                                                                    "type": "string",
+                                                                    "format": "ulid",
+                                                                    "example": "01HW6S3L4N5O6P7Q8R9S0T1U2W"
+                                                                },
+                                                                "quantity": {
+                                                                    "description": "Quantity ordered",
+                                                                    "type": "integer",
+                                                                    "example": 2
+                                                                },
+                                                                "productName": {
+                                                                    "description": "Product name",
+                                                                    "type": "string",
+                                                                    "example": "Laptop Dell XPS"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        }
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/ValidationError"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/InvalidArgument"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/ServerError"
                     }
                 }
             },
@@ -24,7 +110,7 @@
                     "Orders"
                 ],
                 "summary": "Create new order",
-                "operationId": "e14d7af4c071a7773aef6dbe633af1bd",
+                "operationId": "ea7f9f7ac84384bee1c0ea5239cfee15",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -51,13 +137,13 @@
                 }
             }
         },
-        "/orders/{orderId}": {
+        "/api/orders/{orderId}": {
             "get": {
                 "tags": [
                     "Orders"
                 ],
                 "summary": "Visualizza un ordine",
-                "operationId": "e75fb8c791d80455f7716f51ba61ef4d",
+                "operationId": "2b061f156e5bf5c98c579eb6800789af",
                 "parameters": [
                     {
                         "name": "orderId",
@@ -70,7 +156,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Dettaglio ordine"
+                        "description": "Order Details"
                     },
                     "404": {
                         "description": "Ordine non trovato"
@@ -82,7 +168,7 @@
                     "Orders"
                 ],
                 "summary": "Elimina un ordine",
-                "operationId": "903369805a6d667aa47f9d66de11fc84",
+                "operationId": "6946263ccd60354722724b54264f5ef8",
                 "parameters": [
                     {
                         "name": "orderId",
@@ -107,7 +193,7 @@
                     "Orders"
                 ],
                 "summary": "Aggiorna un ordine",
-                "operationId": "94e1b7c8fbe94b7792b7e4dcc42b733b",
+                "operationId": "a1e4f8ce3931999ff6481cb2f1cd729f",
                 "parameters": [
                     {
                         "name": "orderId",
@@ -135,10 +221,16 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Ordine aggiornato"
+                        "description": "Order updated successfully"
                     },
-                    "404": {
-                        "description": "Ordine non trovato"
+                    "400": {
+                        "$ref": "#/components/responses/ValidationError"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/InvalidArgument"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/ServerError"
                     }
                 }
             }
@@ -184,11 +276,17 @@
                             ]
                         ]
                     },
-                    "notes": {
-                        "description": "Optional notes for the order",
+                    "name": {
+                        "description": "Name for the order",
                         "type": "string",
-                        "example": "Consegna urgente richiesta",
-                        "nullable": true
+                        "example": "Urgent delivery",
+                        "nullable": false
+                    },
+                    "description": {
+                        "description": "Description for the order",
+                        "type": "string",
+                        "example": "Order for Mr.Rossi in Catanzaro",
+                        "nullable": false
                     }
                 },
                 "type": "object"
@@ -257,6 +355,74 @@
                             "type": "object"
                         }
                     }
+                }
+            }
+        },
+        "parameters": {
+            "ListOrdersPage": {
+                "name": "page",
+                "in": "query",
+                "description": "Page number for pagination",
+                "required": true,
+                "schema": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "example": 1
+                }
+            },
+            "ListOrdersRowsPerPage": {
+                "name": "rowsPerPage",
+                "in": "query",
+                "description": "Number of items per page",
+                "required": true,
+                "schema": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1,
+                    "example": 10
+                }
+            },
+            "ListOrdersName": {
+                "name": "name",
+                "in": "query",
+                "description": "Filter orders by name (partial match)",
+                "required": false,
+                "schema": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "example": "Urgent delivery"
+                }
+            },
+            "ListOrdersDescription": {
+                "name": "description",
+                "in": "query",
+                "description": "Filter orders by description (partial match)",
+                "required": false,
+                "schema": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "example": "Mr.Rossi"
+                }
+            },
+            "ListOrdersCreationDate": {
+                "name": "creationDate",
+                "in": "query",
+                "description": "Filter orders by creation date",
+                "required": false,
+                "schema": {
+                    "type": "string",
+                    "format": "date",
+                    "example": "2024-01-15"
+                }
+            },
+            "ListOrdersWithDetails": {
+                "name": "withDetails",
+                "in": "query",
+                "description": "Include detailed order information",
+                "required": false,
+                "schema": {
+                    "type": "boolean",
+                    "example": true
                 }
             }
         }

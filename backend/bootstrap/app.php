@@ -4,7 +4,9 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -17,6 +19,13 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withExceptions(function (Exceptions $exceptions): void {
+        $exceptions->render(function (NotFoundHttpException $e, Request $request) {
+            return response()->json([
+                'message' => 'Route not found',
+                'error' => 'The requested resource could not be found',
+                'type' => 'not_found'
+            ], 404);
+        });
         $exceptions->render(function (InvalidArgumentException $e, Request $request) {
             return response()->json([
                 'message' => 'Invalid argument provided',
@@ -34,6 +43,7 @@ return Application::configure(basePath: dirname(__DIR__))
         });
 
         $exceptions->render(function (\Exception $e, Request $request) {
+            Log::error($e->getMessage());
             return response()->json([
                 'message' => 'Internal server error',
             ], 500);
