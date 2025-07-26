@@ -37,7 +37,6 @@ class FindOrderRequest extends StockRequest
 
     public function prepareForValidation(): void
     {
-        Log::info($this->route('orderId'));
         $this->merge([
            'orderId' => $this->route('orderId'),
            'withDetails' => $this->query('withDetails'),
