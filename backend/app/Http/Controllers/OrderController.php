@@ -79,8 +79,7 @@ class OrderController extends Controller
         return response()->json(
             data: $orders->map(
                 fn($order) => $order->toArrayResponse(
-                    !empty($request->validated('withDetails')
-                    )
+                    withDetails: $request->toDto()->withDetails
                 )
             )
         );
@@ -113,7 +112,9 @@ class OrderController extends Controller
             );
         }
         return response()->json(
-            data: $order->toArrayResponse(!empty($request->validated('withDetails')))
+            data: $order->toArrayResponse(
+                withDetails: $request->toDto()->withDetails
+            )
         );
 
     }

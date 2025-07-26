@@ -25,7 +25,7 @@ class FindOrderRequest extends StockRequest
     public function prepareForValidation(): void
     {
         $this->merge([
-           'orderId' => $this->query('orderId'),
+           'orderId' => $this->route('orderId'),
            'withDetails' => $this->query('withDetails'),
         ]);
     }
@@ -34,7 +34,8 @@ class FindOrderRequest extends StockRequest
     {
         return new FindOrderDto(
             orderId: $this->validated('orderId'),
-            withDetails: $this->validated('withDetails'),
+            withDetails: ValidationPatterns::toBoolean($this->validated('withDetails')),
+
         );
     }
 }

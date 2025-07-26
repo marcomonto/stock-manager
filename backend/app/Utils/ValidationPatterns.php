@@ -14,4 +14,12 @@ class ValidationPatterns
     public const string BOOL_NULLABLE = 'string|nullable|in:0,1,true,false';
 
     public const string DATE_NULLABLE = 'date_format:Y-m-d|nullable';
+
+    public static function toBoolean(?string $value = null): bool
+    {
+        return match (strtolower((string) $value)) {
+            '1', 'true' => true,
+            default => false,
+        };
+    }
 }

@@ -86,7 +86,7 @@ class ListOrdersRequest extends StockRequest
     public function toDto(): ListOrderDto
     {
         return new ListOrderDto(
-            withDetails: !empty($this->validated('withDetails')),
+            withDetails: ValidationPatterns::toBoolean($this->validated('withDetails')),
             page: $this->validated('page'),
             rowsPerPage: $this->validated('rowsPerPage'),
             name: $this->validated('name'),
