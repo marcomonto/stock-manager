@@ -25,6 +25,12 @@ class UpdateOrderRequest extends StockRequest
             'description' => ValidationPatterns::STRING_REQUIRED_255,
         ];
     }
+    public function prepareForValidation(): void
+    {
+        $this->merge([
+            'orderId' => $this->route('orderId'),
+        ]);
+    }
 
     public function toDto(): UpdateOrderDto
     {

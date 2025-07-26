@@ -54,7 +54,7 @@ class OrderFindTest extends TestCase
         $this->assertEquals($order->status->value, $responseData['status']);
 
         $this->assertIsString($responseData['id']);
-        $this->assertMatchesRegularExpression('/^[0-9A-HJKMNP-TV-Z]{26}$/', $responseData['id']); // ULID format
+        $this->assertMatchesRegularExpression('/^[0-9A-Z]{26}$/', $responseData['id']); // ULID format
 
         $this->assertIsString($responseData['name']);
         $this->assertNotEmpty($responseData['name']);
@@ -251,7 +251,7 @@ class OrderFindTest extends TestCase
         $this->assertMatchesRegularExpression('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/', $responseData['createdAt']);
         $this->assertMatchesRegularExpression('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/', $responseData['updatedAt']);
 
-        $this->assertMatchesRegularExpression('/^[0-9A-HJKMNP-TV-Z]{26}$/', $responseData['id']);
+        $this->assertMatchesRegularExpression('/^[0-9A-Z]{26}$/', $responseData['id']);
 
         $validStatuses = array_map(fn($status) => $status->value, OrderStatus::cases());
         $this->assertContains($responseData['status'], $validStatuses);

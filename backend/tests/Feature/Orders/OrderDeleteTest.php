@@ -137,7 +137,7 @@ class OrderDeleteTest extends TestCase
     public function test_delete_order_multiple_times(): void
     {
         $order = Order::factory()->create([
-            'status' => OrderStatus::PENDING
+            'status' => OrderStatus::DELIVERED
         ]);
 
         $response1 = $this->delete("api/orders/{$order->id}");
@@ -184,7 +184,7 @@ class OrderDeleteTest extends TestCase
     public function test_delete_order_transaction_rollback_on_error(): void
     {
         $order = Order::factory()->create([
-            'status' => OrderStatus::PENDING
+            'status' => OrderStatus::DELIVERED
         ]);
         $this->mock(\App\Services\OrderService::class, function ($mock) use ($order) {
             $mock->shouldReceive('delete')
@@ -198,14 +198,14 @@ class OrderDeleteTest extends TestCase
 
         $this->assertDatabaseHas('orders', [
             'id' => $order->id,
-            'status' => OrderStatus::PENDING->value
+            'status' => OrderStatus::DELIVERED->value
         ]);
     }
 
     public function test_delete_response_format(): void
     {
         $order = Order::factory()->create([
-            'status' => OrderStatus::PENDING
+            'status' => OrderStatus::DELIVERED
         ]);
 
         $response = $this->delete("api/orders/{$order->id}");

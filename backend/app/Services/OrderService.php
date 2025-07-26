@@ -14,7 +14,7 @@ use Illuminate\Support\Str;
 class OrderService
 {
     public function create(
-        array   $orderItems,
+        array  $orderItems,
         string $name,
         string $description,
     ): Order
@@ -50,7 +50,7 @@ class OrderService
             if ($product->stock_quantity < $quantity) {
                 throw new InvalidArgumentException("Insufficient Quantity for $product->name");
             }
-            if(!empty($itemsToAttach[$productId])){
+            if (!empty($itemsToAttach[$productId])) {
                 throw new InvalidArgumentException("Multiple products with same id");
             }
             $product->decrement('stock_quantity', $quantity);
@@ -68,8 +68,8 @@ class OrderService
     }
 
     public function update(
-        Order   $order,
-        array   $orderItems,
+        Order  $order,
+        array  $orderItems,
         string $name,
         string $description,
     ): Order
@@ -101,8 +101,16 @@ class OrderService
                 throw new InvalidArgumentException("Product {$productId} not found");
             }
 
+            if (!$product->is_active) {
+                throw new InvalidArgumentException("Product $product->name not active");
+            }
+
             if (!$product->hasStock($quantity)) {
                 throw new InvalidArgumentException("Insufficient stock for product {$productId}");
+            }
+
+            if (!empty($itemsToSync[$productId])) {
+                throw new InvalidArgumentException("Multiple products with same id");
             }
 
             $product->decrement('stock_quantity', $quantity);
@@ -145,11 +153,12 @@ class OrderService
     }
 
     public function list(
-        ?string $name = null,
-        ?string $description = null,
-        ?\DateTime $creationDate = null,
+        ?string            $name = null,
+        ?string            $description = null,
+        ?\DateTime         $creationDate = null,
         ?PaginationOptions $paginationOptions = null,
-    ): Collection {
+    ): Collection
+    {
         $query = Order::query();
         if ($name) {
             $query->where('name', 'like', '%' . $name . '%');
