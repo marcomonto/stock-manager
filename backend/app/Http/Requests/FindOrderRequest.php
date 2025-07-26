@@ -2,11 +2,24 @@
 
 namespace App\Http\Requests;
 
-use App\Dtos\Dto;
 use App\Dtos\FindOrderDto;
-use App\Enums\Dtos;
 use App\Utils\ValidationPatterns;
+use Illuminate\Support\Facades\Log;
 
+/**
+ * @OA\Parameter(
+ *     parameter="FindOrderWithDetails",
+ *     name="withDetails",
+ *     in="query",
+ *     required=false,
+ *     description="Include detailed order information with related items",
+ *     @OA\Schema(
+ *         type="boolean",
+ *         example=true,
+ *         enum={true, false}
+ *     )
+ * )
+ */
 class FindOrderRequest extends StockRequest
 {
     /**
@@ -24,6 +37,7 @@ class FindOrderRequest extends StockRequest
 
     public function prepareForValidation(): void
     {
+        Log::info($this->route('orderId'));
         $this->merge([
            'orderId' => $this->route('orderId'),
            'withDetails' => $this->query('withDetails'),

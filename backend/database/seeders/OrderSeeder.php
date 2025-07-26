@@ -13,6 +13,7 @@ class OrderSeeder extends Seeder
     {
         $orders = [
             [
+                'id' => "01HV5R2K3M4N5P6Q7R8S9T0U1V",
                 'name' => 'Ordine Gaming Setup',
                 'description' => 'Ordine completo per setup gaming con console, cuffie e accessori per streaming professionale.',
                 'status' => OrderStatus::DELIVERED,
@@ -66,7 +67,7 @@ class OrderSeeder extends Seeder
 
         foreach ($orders as $orderData) {
             Order::query()->create([
-                'id' => Str::ulid(),
+                'id' => $orderData['id'] ?? Str::ulid(),
                 'name' => $orderData['name'],
                 'description' => $orderData['description'],
                 'status' => $orderData['status'],

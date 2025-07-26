@@ -89,15 +89,53 @@ class OrderController extends Controller
      * @OA\Get(
      *     path="/api/orders/{orderId}",
      *     tags={"Orders"},
-     *     summary="Visualizza un ordine",
+     *     summary="Get a specific order by ID",
+     *     description="Retrieve detailed information about a specific order using its unique identifier",
      *     @OA\Parameter(
      *         name="orderId",
      *         in="path",
      *         required=true,
-     *         @OA\Schema(type="integer")
+     *         description="The unique identifier of the order",
+     *         @OA\Schema(type="string", format="ulid", example="01HV5R2K3M4N5P6Q7R8S9T0U1V")
      *     ),
-     *     @OA\Response(response=200, description="Order Details"),
-     *     @OA\Response(response=404, description="Ordine non trovato")
+     *     @OA\Parameter(ref="#/components/parameters/FindOrderWithDetails"),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Order details retrieved successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 description="Order details",
+     *                 @OA\Property(property="id", type="string", format="ulid", description="Order ID", example="01HV5R2K3M4N5P6Q7R8S9T0U1V"),
+     *                 @OA\Property(property="name", type="string", description="Order name", example="Urgent delivery"),
+     *                 @OA\Property(property="description", type="string", description="Order description", example="Order for Mr.Rossi in Catanzaro"),
+     *                 @OA\Property(property="status", type="string", description="Order status", example="delivered"),
+     *                 @OA\Property(property="createdAt", type="string", format="date-time", description="Creation timestamp", example="2024-01-15 10:30:00"),
+     *                 @OA\Property(property="updatedAt", type="string", format="date-time", description="Last update timestamp", example="2024-01-15 10:30:00"),
+     *                 @OA\Property(
+     *                     property="orderItems",
+     *                     type="array",
+     *                     description="Order items (included when withDetails=true)",
+     *                     @OA\Items(
+     *                         @OA\Property(property="id", type="string", format="ulid", description="Order item ID", example="01HW6S3L4N5O6P7Q8R9S0T1U2W"),
+     *                         @OA\Property(property="quantity", type="integer", description="Quantity ordered", example=2),
+     *                         @OA\Property(property="createdAt", type="string", format="date-time", description="Item creation timestamp", example="2024-01-15 10:30:00"),
+     *                         @OA\Property(property="updatedAt", type="string", format="date-time", description="Item update timestamp", example="2024-01-15 10:30:00")
+     *                     )
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Order not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="error", type="string", example="Order not found")
+     *         )
+     *     ),
+     *     @OA\Response(response=400, ref="#/components/responses/ValidationError"),
+     *     @OA\Response(response=500, ref="#/components/responses/ServerError")
      * )
      */
     public function find(FindOrderRequest $request): JsonResponse

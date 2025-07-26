@@ -162,24 +162,130 @@
                 "tags": [
                     "Orders"
                 ],
-                "summary": "Visualizza un ordine",
+                "summary": "Get a specific order by ID",
+                "description": "Retrieve detailed information about a specific order using its unique identifier",
                 "operationId": "2b061f156e5bf5c98c579eb6800789af",
                 "parameters": [
                     {
                         "name": "orderId",
                         "in": "path",
+                        "description": "The unique identifier of the order",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "string",
+                            "format": "ulid",
+                            "example": "01HV5R2K3M4N5P6Q7R8S9T0U1V"
                         }
+                    },
+                    {
+                        "$ref": "#/components/parameters/FindOrderWithDetails"
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Order Details"
+                        "description": "Order details retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "description": "Order details",
+                                            "properties": {
+                                                "id": {
+                                                    "description": "Order ID",
+                                                    "type": "string",
+                                                    "format": "ulid",
+                                                    "example": "01HV5R2K3M4N5P6Q7R8S9T0U1V"
+                                                },
+                                                "name": {
+                                                    "description": "Order name",
+                                                    "type": "string",
+                                                    "example": "Urgent delivery"
+                                                },
+                                                "description": {
+                                                    "description": "Order description",
+                                                    "type": "string",
+                                                    "example": "Order for Mr.Rossi in Catanzaro"
+                                                },
+                                                "status": {
+                                                    "description": "Order status",
+                                                    "type": "string",
+                                                    "example": "delivered"
+                                                },
+                                                "createdAt": {
+                                                    "description": "Creation timestamp",
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2024-01-15 10:30:00"
+                                                },
+                                                "updatedAt": {
+                                                    "description": "Last update timestamp",
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2024-01-15 10:30:00"
+                                                },
+                                                "orderItems": {
+                                                    "description": "Order items (included when withDetails=true)",
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "description": "Order item ID",
+                                                                "type": "string",
+                                                                "format": "ulid",
+                                                                "example": "01HW6S3L4N5O6P7Q8R9S0T1U2W"
+                                                            },
+                                                            "quantity": {
+                                                                "description": "Quantity ordered",
+                                                                "type": "integer",
+                                                                "example": 2
+                                                            },
+                                                            "createdAt": {
+                                                                "description": "Item creation timestamp",
+                                                                "type": "string",
+                                                                "format": "date-time",
+                                                                "example": "2024-01-15 10:30:00"
+                                                            },
+                                                            "updatedAt": {
+                                                                "description": "Item update timestamp",
+                                                                "type": "string",
+                                                                "format": "date-time",
+                                                                "example": "2024-01-15 10:30:00"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     },
                     "404": {
-                        "description": "Ordine non trovato"
+                        "description": "Order not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Order not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/ValidationError"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/ServerError"
                     }
                 }
             },
@@ -379,6 +485,20 @@
             }
         },
         "parameters": {
+            "FindOrderWithDetails": {
+                "name": "withDetails",
+                "in": "query",
+                "description": "Include detailed order information with related items",
+                "required": false,
+                "schema": {
+                    "type": "boolean",
+                    "enum": [
+                        true,
+                        false
+                    ],
+                    "example": true
+                }
+            },
             "ListOrdersPage": {
                 "name": "page",
                 "in": "query",
