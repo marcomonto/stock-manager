@@ -9,10 +9,8 @@ use Illuminate\Foundation\Http\FormRequest;
 
 abstract class StockRequest extends FormRequest
 {
-    protected DtoFactory $dtoFactory;
     public function __construct()
     {
-        $this->dtoFactory = app(DtoFactory::class);
         parent::__construct();
     }
 

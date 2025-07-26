@@ -22,13 +22,19 @@ class FindOrderRequest extends StockRequest
         ];
     }
 
+    public function prepareForValidation(): void
+    {
+        $this->merge([
+           'orderId' => $this->query('orderId'),
+           'withDetails' => $this->query('withDetails'),
+        ]);
+    }
+
     public function toDto(): FindOrderDto
     {
-        /** @var FindOrderDto */
-        return $this->dtoFactory
-            ->create(
-                Dtos::FindOrder,
-                $this->validated()
-            );
+        return new FindOrderDto(
+            orderId: $this->validated('orderId'),
+            withDetails: $this->validated('withDetails'),
+        );
     }
 }

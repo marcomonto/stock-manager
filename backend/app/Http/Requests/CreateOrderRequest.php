@@ -61,10 +61,9 @@ class CreateOrderRequest extends StockRequest
 
     public function toDto(): CreateOrderDto
     {
-        /** @var CreateOrderDto */
-        return $this->dtoFactory->create(
-            Dtos::CreateOrder,
-            $this->validated()
+        return new CreateOrderDto(
+            orderItems: $this->validated('orderItems'),
+            notes: $this->validated('notes'),
         );
     }
 }

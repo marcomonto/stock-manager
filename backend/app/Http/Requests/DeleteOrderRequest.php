@@ -22,10 +22,8 @@ class DeleteOrderRequest extends StockRequest
 
     public function toDto(): DeleteOrderDto
     {
-        /** @var DeleteOrderDto */
-        return $this->dtoFactory->create(
-            Dtos::DeleteOrder,
-            $this->validated()
+        return new DeleteOrderDto(
+          orderId: $this->validated('orderId'),
         );
     }
 }

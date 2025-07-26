@@ -27,11 +27,10 @@ class UpdateOrderRequest extends StockRequest
 
     public function toDto(): UpdateOrderDto
     {
-        /** @var UpdateOrderDto */
-        return $this->dtoFactory
-            ->create(
-                Dtos::UpdateOrder,
-                $this->validated()
-            );
+        return new UpdateOrderDto(
+            orderId: $this->validated('orderId'),
+            orderItems: $this->validated('orderItems'),
+            notes: $this->validated('notes'),
+        );
     }
 }

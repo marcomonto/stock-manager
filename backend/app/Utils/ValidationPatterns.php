@@ -9,5 +9,8 @@ class ValidationPatterns
     public const string ULID_REQUIRED = 'string|required|ulid';
     public const string INT_REQUIRED_POSITIVE = 'int|required|min:0';
     public const string STRING_NULLABLE = 'string|nullable';
+    public const string STRING_NULLABLE_255 = 'string|nullable|max:255';
     public const string BOOL_NULLABLE = 'bool|nullable';
+
+    public const string DATE_NULLABLE = 'date_format:Y-m-d|nullable';
 }

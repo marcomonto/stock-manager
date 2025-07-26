@@ -9,6 +9,7 @@ readonly class FindOrderDto implements Dto
 
     public function __construct(
         public string $orderId,
+        public bool $withDetails,
     )
     {
 
@@ -16,6 +17,9 @@ readonly class FindOrderDto implements Dto
 
     public function toArray(): array
     {
-        return ['orderId' => $this->orderId];
+        return [
+            'orderId' => $this->orderId,
+            'withDetails' => $this->withDetails,
+        ];
     }
 }
