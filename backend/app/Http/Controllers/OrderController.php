@@ -186,7 +186,7 @@ class OrderController extends Controller
     }
 
     /**
-     * @OA\Patch(
+     * @OA\Put(
      *     path="/api/orders/{orderId}",
      *     tags={"Orders"},
      *     summary="Aggiorna un ordine",
@@ -223,15 +223,43 @@ class OrderController extends Controller
      * @OA\Delete(
      *     path="/api/orders/{orderId}",
      *     tags={"Orders"},
-     *     summary="Elimina un ordine",
-     *     @OA\Parameter(
-     *         name="orderId",
-     *         in="path",
-     *         required=true,
-     *         @OA\Schema(type="integer")
+     *     summary="Delete Order",
+     *     description="Delete order, and products' stock quantities are incremented.",
+     *     operationId="deleteOrder",
+     *     @OA\Parameter(ref="#/components/parameters/orderId"),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Order deleted successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             description="Empty response on success"
+     *         )
      *     ),
-     *     @OA\Response(response=204, description="Ordine eliminato"),
-     *     @OA\Response(response=404, description="Ordine non trovato")
+     *     @OA\Response(
+     *         response=404,
+     *         description="Order not found",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example="Invalid argument provided"
+     *             ),
+     *             @OA\Property(
+     *                 property="error",
+     *                 type="string",
+     *                 example="Order 01HV5R2K3M4N5P6Q7R8S9T0U1V not found"
+     *             ),
+     *             @OA\Property(
+     *                 property="type",
+     *                 type="string",
+     *                 example="invalid_argument"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=400, ref="#/components/responses/ValidationError"),
+     *     @OA\Response(response=422, ref="#/components/responses/InvalidArgument"),
+     *     @OA\Response(response=500, ref="#/components/responses/ServerError")
      * )
      * @throws \Exception
      */
