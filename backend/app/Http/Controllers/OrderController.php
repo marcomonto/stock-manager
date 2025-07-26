@@ -7,7 +7,6 @@ use App\Http\Requests\DeleteOrderRequest;
 use App\Http\Requests\FindOrderRequest;
 use App\Http\Requests\ListOrdersRequest;
 use App\Http\Requests\UpdateOrderRequest;
-use App\Models\OrderItem;
 use App\UseCases\OrderUseCase;
 use Illuminate\Http\JsonResponse;
 
@@ -21,10 +20,7 @@ class OrderController extends Controller
 {
     public function __construct(
         protected OrderUseCase $orderUseCase,
-    )
-    {
-
-    }
+    ){}
 
     /**
      * @OA\Get(
@@ -33,6 +29,7 @@ class OrderController extends Controller
      *     summary="Elenco ordini",
      *     @OA\Response(response=200, description="Lista ordini")
      * )
+     * @throws \DateMalformedStringException
      */
     public function list(ListOrdersRequest $request): JsonResponse
     {

@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Dtos\Dto;
 use App\Dtos\ListOrderDto;
 use App\Utils\ValidationPatterns;
 
@@ -25,15 +24,20 @@ class ListOrdersRequest extends StockRequest
         ];
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     */
     public function toDto(): ListOrderDto
     {
         return new ListOrderDto(
-          withDetails: !empty($this->validated('withDetails')),
-          page: $this->validated('page'),
-          rowsPerPage: $this->validated('rowsPerPage'),
-          name: $this->validated('name'),
-          description: $this->validated('description'),
-          creationDate: $this->validated('creationDate'),
+            withDetails: !empty($this->validated('withDetails')),
+            page: $this->validated('page'),
+            rowsPerPage: $this->validated('rowsPerPage'),
+            name: $this->validated('name'),
+            description: $this->validated('description'),
+            creationDate: !empty($this->validated('creationDate')) ?
+                new \DateTime($this->validated('creationDate')) :
+                null,
         );
     }
 }
