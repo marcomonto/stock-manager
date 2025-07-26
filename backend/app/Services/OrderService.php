@@ -26,7 +26,7 @@ class OrderService
             ->values();
 
         // to avoid possible deadlock with multiple requests
-        // on same products
+        // on same products, very edgy case, but better handle it
         $products = Product::query()
             ->whereIn('id', $productIds)
             ->orderBy('id')
@@ -40,11 +40,18 @@ class OrderService
             $product = $products->get($productId);
 
             if (!$product) {
-                throw new InvalidArgumentException();
+                throw new InvalidArgumentException("Product not present with given id: $productId");
+            }
+
+            if (!$product->is_active) {
+                throw new InvalidArgumentException("Product $product->name not active");
             }
 
             if ($product->stock_quantity < $quantity) {
-                throw new InvalidArgumentException();
+                throw new InvalidArgumentException("Insufficient Quantity for $product->name");
+            }
+            if(!empty($itemsToAttach[$productId])){
+                throw new InvalidArgumentException("Multiple products with same id");
             }
             $product->decrement('stock_quantity', $quantity);
             $itemsToAttach[$productId] = ['quantity' => $quantity];

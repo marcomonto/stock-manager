@@ -6,7 +6,7 @@ class ValidationPatterns
 {
     public const string ARRAY_REQUIRED = 'array|required';
     public const string STRING_REQUIRED = 'string|required';
-    public const string STRING_REQUIRED_255 = 'string|required';
+    public const string STRING_REQUIRED_255 = 'string|required|max:255';
     public const string ULID_REQUIRED = 'string|required|regex:/^[0-9A-Z]{26}$/';
     public const string INT_REQUIRED_POSITIVE = 'int|required|min:1';
     public const string STRING_NULLABLE = 'string|nullable';
