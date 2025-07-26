@@ -14,6 +14,26 @@
                 "summary": "List orders with optional filtering and pagination",
                 "description": "Retrieve a list of orders with optional filters for name, description, creation date and pagination support",
                 "operationId": "cb6496a706b15cae633504c9e360ff08",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/ListOrdersPage"
+                    },
+                    {
+                        "$ref": "#/components/parameters/ListOrdersRowsPerPage"
+                    },
+                    {
+                        "$ref": "#/components/parameters/ListOrdersName"
+                    },
+                    {
+                        "$ref": "#/components/parameters/ListOrdersDescription"
+                    },
+                    {
+                        "$ref": "#/components/parameters/ListOrdersCreationDate"
+                    },
+                    {
+                        "$ref": "#/components/parameters/ListOrdersWithDetails"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "List of orders retrieved successfully",

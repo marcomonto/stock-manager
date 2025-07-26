@@ -70,7 +70,7 @@ class Order extends Model
             return [
                 ...$orderSerialized,
                 'orderItems' => $this->orderItems->map(fn(OrderItem $orderItem) => [
-                    'id' => $orderItem->id,
+                    'name' => $orderItem->product->name,
                     'quantity' => $orderItem->quantity,
                     'createdAt' => $orderItem->created_at->format('Y-m-d H:i:s'),
                     'updatedAt' => $orderItem->updated_at->format('Y-m-d H:i:s'),

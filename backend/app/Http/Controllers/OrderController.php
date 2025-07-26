@@ -20,7 +20,9 @@ class OrderController extends Controller
 {
     public function __construct(
         protected OrderUseCase $orderUseCase,
-    ){}
+    )
+    {
+    }
 
     /**
      * @OA\Get(
@@ -28,6 +30,12 @@ class OrderController extends Controller
      *     tags={"Orders"},
      *     summary="List orders with optional filtering and pagination",
      *     description="Retrieve a list of orders with optional filters for name, description, creation date and pagination support",
+     *     @OA\Parameter(ref="#/components/parameters/ListOrdersPage"),
+     *     @OA\Parameter(ref="#/components/parameters/ListOrdersRowsPerPage"),
+     *     @OA\Parameter(ref="#/components/parameters/ListOrdersName"),
+     *     @OA\Parameter(ref="#/components/parameters/ListOrdersDescription"),
+     *     @OA\Parameter(ref="#/components/parameters/ListOrdersCreationDate"),
+     *     @OA\Parameter(ref="#/components/parameters/ListOrdersWithDetails"),
      *     @OA\Response(
      *         response=200,
      *         description="List of orders retrieved successfully",

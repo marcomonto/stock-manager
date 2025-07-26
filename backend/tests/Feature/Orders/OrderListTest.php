@@ -142,8 +142,8 @@ class OrderListTest extends TestCase
 
             if (!empty($order['orderItems'])) {
                 foreach ($order['orderItems'] as $orderItem) {
-                    $this->assertArrayHasKeys(['id', 'quantity', 'createdAt', 'updatedAt'], $orderItem);
-                    $this->assertIsString($orderItem['id']);
+                    $this->assertArrayHasKeys(['name', 'quantity', 'createdAt', 'updatedAt'], $orderItem);
+                    $this->assertIsString($orderItem['name']);
                     $this->assertIsInt($orderItem['quantity']);
                     $this->assertGreaterThan(0, $orderItem['quantity']);
                 }
