@@ -21,7 +21,6 @@ class OrderItemSeeder extends Seeder
 
             foreach ($selectedProducts as $product) {
                 OrderItem::query()->create([
-                    'id' => Str::ulid(),
                     'order_id' => $order->id,
                     'product_id' => $product->id,
                     'quantity' => rand(1, 3),

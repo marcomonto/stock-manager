@@ -6,6 +6,7 @@ use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -32,6 +33,14 @@ return Application::configure(basePath: dirname(__DIR__))
                 'error' => $e->getMessage(),
                 'type' => 'invalid_argument'
             ], 422);
+        });
+        $exceptions->render(function (MethodNotAllowedHttpException $e, Request $request) {
+            return response()->json([
+                'message' => 'Method not allowed',
+                'error' => 'The ' . $request->method() . ' method is not allowed for this route',
+                'type' => 'method_not_allowed',
+                'allowed_methods' => $e->getHeaders()['Allow'] ?? []
+            ], 405);
         });
 
         $exceptions->render(function (ValidationException $e, Request $request) {

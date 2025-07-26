@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\OrderStatus;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -24,7 +25,7 @@ use Illuminate\Support\Carbon;
  */
 class Order extends Model
 {
-    use HasUlids, SoftDeletes;
+    use HasUlids, SoftDeletes, HasFactory;
 
     protected $fillable = [
         'id',

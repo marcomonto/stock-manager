@@ -36,12 +36,12 @@ return new class extends Migration
         });
 
         Schema::create('order_items', function (Blueprint $table) {
-            $table->ulid('id')->primary();
             $table->foreignUlid('order_id')->constrained()->cascadeOnDelete();
             $table->foreignUlid('product_id')->constrained();
             $table->integer('quantity');
             $table->timestamps();
-            $table->unique(['order_id', 'product_id']);
+
+            $table->primary(['order_id', 'product_id']);
         });
     }
 

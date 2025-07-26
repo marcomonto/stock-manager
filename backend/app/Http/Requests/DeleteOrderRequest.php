@@ -20,6 +20,13 @@ class DeleteOrderRequest extends StockRequest
         ];
     }
 
+    public function prepareForValidation()
+    {
+        $this->merge([
+            'orderId' => $this->route('orderId'),
+        ]);
+    }
+
     public function toDto(): DeleteOrderDto
     {
         return new DeleteOrderDto(
