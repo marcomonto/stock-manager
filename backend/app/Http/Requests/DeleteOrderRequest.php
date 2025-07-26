@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Dtos\DeleteOrderDto;
 use App\Utils\ValidationPatterns;
+
 /**
  * @OA\Parameter(
  *     parameter="orderId",
@@ -11,6 +12,7 @@ use App\Utils\ValidationPatterns;
  *     in="path",
  *     required=true,
  *     description="Order ULID identifier",
+ *
  *     @OA\Schema(
  *         type="string",
  *         format="ulid",
@@ -18,7 +20,7 @@ use App\Utils\ValidationPatterns;
  *         example="01HV5R2K3M4N5P6Q7R8S9T0U1V"
  *     )
  * )
-*/
+ */
 class DeleteOrderRequest extends StockRequest
 {
     /**
@@ -43,7 +45,7 @@ class DeleteOrderRequest extends StockRequest
     public function toDto(): DeleteOrderDto
     {
         return new DeleteOrderDto(
-          orderId: $this->validated('orderId'),
+            orderId: $this->validated('orderId'),
         );
     }
 }

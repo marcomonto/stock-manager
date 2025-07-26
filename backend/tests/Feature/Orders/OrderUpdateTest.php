@@ -26,12 +26,12 @@ class OrderUpdateTest extends TestCase
         $order = Order::factory()->create([
             'name' => 'Original Order',
             'description' => 'Original description',
-            'status' => OrderStatus::DELIVERED
+            'status' => OrderStatus::DELIVERED,
         ]);
 
         $order->products()->attach([
             $originalProduct1->id => ['quantity' => 5],
-            $originalProduct2->id => ['quantity' => 3]
+            $originalProduct2->id => ['quantity' => 3],
         ]);
 
         $originalProduct1->update(['stock_quantity' => 95]); // 100 - 5
@@ -45,8 +45,8 @@ class OrderUpdateTest extends TestCase
             'description' => 'Updated order description',
             'orderItems' => [
                 [$newProduct1->id, 10],
-                [$newProduct2->id, 5]
-            ]
+                [$newProduct2->id, 5],
+            ],
         ];
 
         $response = $this->putJson("api/orders/{$order->id}", $updateData);
@@ -79,12 +79,12 @@ class OrderUpdateTest extends TestCase
         $product2 = Product::factory()->create(['stock_quantity' => 50]);
 
         $order = Order::factory()->create([
-            'status' => OrderStatus::DELIVERED
+            'status' => OrderStatus::DELIVERED,
         ]);
 
         $order->products()->attach([
             $product1->id => ['quantity' => 10],
-            $product2->id => ['quantity' => 5]
+            $product2->id => ['quantity' => 5],
         ]);
 
         $product1->update(['stock_quantity' => 90]); // 100 - 10
@@ -95,8 +95,8 @@ class OrderUpdateTest extends TestCase
             'description' => 'Updated description',
             'orderItems' => [
                 [$product1->id, 15], // Era 10, ora 15
-                [$product2->id, 8]   // Era 5, ora 8
-            ]
+                [$product2->id, 8],   // Era 5, ora 8
+            ],
         ];
 
         $response = $this->putJson("api/orders/{$order->id}", $updateData);
@@ -114,15 +114,15 @@ class OrderUpdateTest extends TestCase
         $product = Product::factory()->create(['stock_quantity' => 50]);
 
         $order = Order::factory()->create([
-            'status' => OrderStatus::CANCELLED
+            'status' => OrderStatus::CANCELLED,
         ]);
 
         $updateData = [
             'name' => 'Updated Order',
             'description' => 'This should fail',
             'orderItems' => [
-                [$product->id, 5]
-            ]
+                [$product->id, 5],
+            ],
         ];
 
         $response = $this->putJson("api/orders/{$order->id}", $updateData);
@@ -142,11 +142,11 @@ class OrderUpdateTest extends TestCase
         $newProduct = Product::factory()->create(['stock_quantity' => 5]);
 
         $order = Order::factory()->create([
-            'status' => OrderStatus::PENDING
+            'status' => OrderStatus::PENDING,
         ]);
 
         $order->products()->attach([
-            $originalProduct->id => ['quantity' => 10]
+            $originalProduct->id => ['quantity' => 10],
         ]);
 
         $originalProduct->update(['stock_quantity' => 40]); // 50 - 10
@@ -155,8 +155,8 @@ class OrderUpdateTest extends TestCase
             'name' => 'Updated Order',
             'description' => 'This should fail',
             'orderItems' => [
-                [$newProduct->id, 10]
-            ]
+                [$newProduct->id, 10],
+            ],
         ];
 
         $response = $this->putJson("api/orders/{$order->id}", $updateData);
@@ -176,11 +176,11 @@ class OrderUpdateTest extends TestCase
         $fakeProductId = strtoupper(\Illuminate\Support\Str::ulid());
 
         $order = Order::factory()->create([
-            'status' => OrderStatus::PENDING
+            'status' => OrderStatus::PENDING,
         ]);
 
         $order->products()->attach([
-            $originalProduct->id => ['quantity' => 10]
+            $originalProduct->id => ['quantity' => 10],
         ]);
 
         $originalProduct->update(['stock_quantity' => 40]);
@@ -189,8 +189,8 @@ class OrderUpdateTest extends TestCase
             'name' => 'Updated Order',
             'description' => 'This should fail',
             'orderItems' => [
-                [$fakeProductId, 5]
-            ]
+                [$fakeProductId, 5],
+            ],
         ];
 
         $response = $this->putJson("api/orders/{$order->id}", $updateData);
@@ -210,8 +210,8 @@ class OrderUpdateTest extends TestCase
             'name' => 'Updated Order',
             'description' => 'This should fail',
             'orderItems' => [
-                [$product->id, 5]
-            ]
+                [$product->id, 5],
+            ],
         ];
 
         $response = $this->putJson("api/orders/{$fakeOrderId}", $updateData);
@@ -229,19 +229,19 @@ class OrderUpdateTest extends TestCase
 
         $response = $this->putJson("api/orders/{$order->id}", [
             'description' => 'Valid description',
-            'orderItems' => [[$product->id, 1]]
+            'orderItems' => [[$product->id, 1]],
         ]);
         $response->assertStatus(400);
 
         $response = $this->putJson("api/orders/{$order->id}", [
             'name' => 'Valid name',
-            'orderItems' => [[$product->id, 1]]
+            'orderItems' => [[$product->id, 1]],
         ]);
         $response->assertStatus(400);
 
         $response = $this->putJson("api/orders/{$order->id}", [
             'name' => 'Valid name',
-            'description' => 'Valid description'
+            'description' => 'Valid description',
         ]);
         $response->assertStatus(400);
     }
@@ -254,21 +254,21 @@ class OrderUpdateTest extends TestCase
         $response = $this->putJson("api/orders/{$order->id}", [
             'name' => 'Valid name',
             'description' => 'Valid description',
-            'orderItems' => [['invalid-ulid', 1]]
+            'orderItems' => [['invalid-ulid', 1]],
         ]);
         $response->assertStatus(400);
 
         $response = $this->putJson("api/orders/{$order->id}", [
             'name' => 'Valid name',
             'description' => 'Valid description',
-            'orderItems' => [[$product->id, -1]]
+            'orderItems' => [[$product->id, -1]],
         ]);
         $response->assertStatus(400);
 
         $response = $this->putJson("api/orders/{$order->id}", [
             'name' => 'Valid name',
             'description' => 'Valid description',
-            'orderItems' => [[$product->id, 0]]
+            'orderItems' => [[$product->id, 0]],
         ]);
         $response->assertStatus(400);
     }
@@ -280,7 +280,7 @@ class OrderUpdateTest extends TestCase
         $updateData = [
             'name' => 'Valid name',
             'description' => 'Valid description',
-            'orderItems' => [[$product->id, 1]]
+            'orderItems' => [[$product->id, 1]],
         ];
 
         $response = $this->putJson('api/orders/invalid-ulid', $updateData);
@@ -295,7 +295,7 @@ class OrderUpdateTest extends TestCase
         $product = Product::factory()->create(['stock_quantity' => 50]);
 
         $order = Order::factory()->create([
-            'status' => OrderStatus::PENDING
+            'status' => OrderStatus::PENDING,
         ]);
 
         $updateData = [
@@ -303,8 +303,8 @@ class OrderUpdateTest extends TestCase
             'description' => 'This should fail due to duplicate product IDs',
             'orderItems' => [
                 [$product->id, 2],
-                [$product->id, 3]
-            ]
+                [$product->id, 3],
+            ],
         ];
 
         $response = $this->putJson("api/orders/{$order->id}", $updateData);
@@ -321,11 +321,11 @@ class OrderUpdateTest extends TestCase
         $order = Order::factory()->create([
             'name' => 'Original Order',
             'description' => 'Original description',
-            'status' => OrderStatus::PENDING
+            'status' => OrderStatus::PENDING,
         ]);
 
         $order->products()->attach([
-            $originalProduct->id => ['quantity' => 10]
+            $originalProduct->id => ['quantity' => 10],
         ]);
 
         $originalProduct->update(['stock_quantity' => 40]);
@@ -335,8 +335,8 @@ class OrderUpdateTest extends TestCase
             'description' => 'This should rollback',
             'orderItems' => [
                 [$product1->id, 5],
-                [$product2->id, 10]
-            ]
+                [$product2->id, 10],
+            ],
         ];
 
         $response = $this->putJson("api/orders/{$order->id}", $updateData);
@@ -366,13 +366,13 @@ class OrderUpdateTest extends TestCase
         $product = Product::factory()->create(['stock_quantity' => 50]);
 
         $order = Order::factory()->create([
-            'status' => OrderStatus::PENDING
+            'status' => OrderStatus::PENDING,
         ]);
 
         $updateData = [
             'name' => 'Response Format Test',
             'description' => 'Testing response format',
-            'orderItems' => [[$product->id, 5]]
+            'orderItems' => [[$product->id, 5]],
         ];
 
         $response = $this->putJson("api/orders/{$order->id}", $updateData);
@@ -390,7 +390,7 @@ class OrderUpdateTest extends TestCase
             OrderStatus::PENDING,
             OrderStatus::PROCESSING,
             OrderStatus::SHIPPED,
-            OrderStatus::DELIVERED
+            OrderStatus::DELIVERED,
         ];
 
         foreach ($modifiableStatuses as $status) {
@@ -399,7 +399,7 @@ class OrderUpdateTest extends TestCase
             $updateData = [
                 'name' => "Updated Order - {$status->value}",
                 'description' => 'This should work',
-                'orderItems' => [[$product->id, 1]]
+                'orderItems' => [[$product->id, 1]],
             ];
 
             $response = $this->putJson("api/orders/{$order->id}", $updateData);
@@ -421,7 +421,7 @@ class OrderUpdateTest extends TestCase
 
         $order->products()->attach([
             $originalProduct1->id => ['quantity' => 5],
-            $originalProduct2->id => ['quantity' => 3]
+            $originalProduct2->id => ['quantity' => 3],
         ]);
 
         $originalProduct1->update(['stock_quantity' => 45]);
@@ -430,7 +430,7 @@ class OrderUpdateTest extends TestCase
         $updateData = [
             'name' => 'Single Product Order',
             'description' => 'Now only one product',
-            'orderItems' => [[$newProduct->id, 10]]
+            'orderItems' => [[$newProduct->id, 10]],
         ];
 
         $response = $this->putJson("api/orders/{$order->id}", $updateData);

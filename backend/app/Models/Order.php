@@ -6,8 +6,8 @@ use App\Enums\OrderStatus;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 
@@ -19,23 +19,22 @@ use Illuminate\Support\Carbon;
  * @property Carbon $created_at
  * @property Carbon $updated_at
  * @property Carbon|null $deleted_at
- *
  * @property-read \Illuminate\Database\Eloquent\Collection<int, OrderItem> $orderItems
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Product> $products
  */
 class Order extends Model
 {
-    use HasUlids, SoftDeletes, HasFactory;
+    use HasFactory, HasUlids, SoftDeletes;
 
     protected $fillable = [
         'id',
         'name',
         'description',
-        'status'
+        'status',
     ];
 
     protected $casts = [
-        'status' => OrderStatus::class
+        'status' => OrderStatus::class,
     ];
 
     public function orderItems(): HasMany
@@ -57,8 +56,7 @@ class Order extends Model
 
     public function toArrayResponse(
         bool $withDetails = false
-    ): array
-    {
+    ): array {
         $orderSerialized = [
             'id' => $this->id,
             'name' => $this->name,
@@ -70,7 +68,7 @@ class Order extends Model
         if ($withDetails) {
             return [
                 ...$orderSerialized,
-                'orderItems' => $this->orderItems->map(fn(OrderItem $orderItem) => [
+                'orderItems' => $this->orderItems->map(fn (OrderItem $orderItem) => [
                     'name' => $orderItem->product->name,
                     'quantity' => $orderItem->quantity,
                     'createdAt' => $orderItem->created_at->format('Y-m-d H:i:s'),
@@ -78,7 +76,7 @@ class Order extends Model
                 ]),
             ];
         }
+
         return $orderSerialized;
     }
-
 }

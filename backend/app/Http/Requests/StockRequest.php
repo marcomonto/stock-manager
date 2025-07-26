@@ -3,8 +3,6 @@
 namespace App\Http\Requests;
 
 use App\Dtos\Dto;
-use App\Enums\Dtos;
-use App\Factories\DtoFactory;
 use Illuminate\Foundation\Http\FormRequest;
 
 abstract class StockRequest extends FormRequest
@@ -19,6 +17,5 @@ abstract class StockRequest extends FormRequest
         return true;
     }
 
-    public abstract function toDto(): Dto;
-
+    abstract public function toDto(): Dto;
 }

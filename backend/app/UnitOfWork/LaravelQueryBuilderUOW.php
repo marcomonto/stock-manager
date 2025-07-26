@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\DB;
 
 class LaravelQueryBuilderUOW implements UnitOfWork
 {
-
     public function begin(): void
     {
         DB::beginTransaction();

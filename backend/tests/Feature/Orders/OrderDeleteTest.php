@@ -21,19 +21,19 @@ class OrderDeleteTest extends TestCase
     public function test_successful_order_deletion(): void
     {
         $order = Order::query()->create([
-            'id' => "01HV5L2K3O1N5A6Q7R8S9T0U2A",
+            'id' => '01HV5L2K3O1N5A6Q7R8S9T0U2A',
             'name' => 'Ordine To Delete',
             'description' => 'Eliminami',
             'status' => OrderStatus::DELIVERED,
         ]);
         $this->assertDatabaseHas('orders', [
-            'id' => $order->id
+            'id' => $order->id,
         ]);
         $response = $this->delete("api/orders/{$order->id}");
         $response->assertStatus(200);
         $this->assertDatabaseHas('orders', [
             'id' => $order->id,
-            'status' => OrderStatus::CANCELLED->value
+            'status' => OrderStatus::CANCELLED->value,
         ]);
     }
 
@@ -43,12 +43,12 @@ class OrderDeleteTest extends TestCase
         $product2 = Product::factory()->create(['stock_quantity' => 20]);
 
         $order = Order::factory()->create([
-            'status' => OrderStatus::DELIVERED
+            'status' => OrderStatus::DELIVERED,
         ]);
 
         $order->products()->attach([
             $product1->id => ['quantity' => 3],
-            $product2->id => ['quantity' => 5]
+            $product2->id => ['quantity' => 5],
         ]);
 
         $product1->update(['stock_quantity' => 7]);
@@ -68,7 +68,7 @@ class OrderDeleteTest extends TestCase
     public function test_delete_already_cancelled_order(): void
     {
         $order = Order::factory()->create([
-            'status' => OrderStatus::CANCELLED
+            'status' => OrderStatus::CANCELLED,
         ]);
 
         $response = $this->delete("api/orders/{$order->id}");
@@ -77,7 +77,7 @@ class OrderDeleteTest extends TestCase
 
         $this->assertDatabaseHas('orders', [
             'id' => $order->id,
-            'status' => OrderStatus::CANCELLED->value
+            'status' => OrderStatus::CANCELLED->value,
         ]);
     }
 
@@ -129,7 +129,7 @@ class OrderDeleteTest extends TestCase
 
             $this->assertDatabaseHas('orders', [
                 'id' => $order->id,
-                'status' => OrderStatus::CANCELLED->value
+                'status' => OrderStatus::CANCELLED->value,
             ]);
         }
     }
@@ -137,7 +137,7 @@ class OrderDeleteTest extends TestCase
     public function test_delete_order_multiple_times(): void
     {
         $order = Order::factory()->create([
-            'status' => OrderStatus::DELIVERED
+            'status' => OrderStatus::DELIVERED,
         ]);
 
         $response1 = $this->delete("api/orders/{$order->id}");
@@ -148,18 +148,18 @@ class OrderDeleteTest extends TestCase
 
         $this->assertDatabaseHas('orders', [
             'id' => $order->id,
-            'status' => OrderStatus::CANCELLED->value
+            'status' => OrderStatus::CANCELLED->value,
         ]);
     }
 
     public function test_delete_order_with_complex_product_relationships(): void
     {
         $products = Product::factory()->count(5)->create([
-            'stock_quantity' => 50
+            'stock_quantity' => 50,
         ]);
 
         $order = Order::factory()->create([
-            'status' => OrderStatus::DELIVERED
+            'status' => OrderStatus::DELIVERED,
         ]);
 
         $attachData = [];
@@ -184,7 +184,7 @@ class OrderDeleteTest extends TestCase
     public function test_delete_order_transaction_rollback_on_error(): void
     {
         $order = Order::factory()->create([
-            'status' => OrderStatus::DELIVERED
+            'status' => OrderStatus::DELIVERED,
         ]);
         $this->mock(\App\Services\OrderService::class, function ($mock) use ($order) {
             $mock->shouldReceive('delete')
@@ -198,14 +198,14 @@ class OrderDeleteTest extends TestCase
 
         $this->assertDatabaseHas('orders', [
             'id' => $order->id,
-            'status' => OrderStatus::DELIVERED->value
+            'status' => OrderStatus::DELIVERED->value,
         ]);
     }
 
     public function test_delete_response_format(): void
     {
         $order = Order::factory()->create([
-            'status' => OrderStatus::DELIVERED
+            'status' => OrderStatus::DELIVERED,
         ]);
 
         $response = $this->delete("api/orders/{$order->id}");

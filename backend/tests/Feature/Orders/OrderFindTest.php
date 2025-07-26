@@ -85,7 +85,6 @@ class OrderFindTest extends TestCase
         $response->assertJsonStructure($this->detailedResponseStructure);
         $responseData = $response->json();
 
-
         $this->assertEquals($order->id, $responseData['id']);
         $this->assertEquals($order->name, $responseData['name']);
         $this->assertEquals($order->description, $responseData['description']);
@@ -94,7 +93,7 @@ class OrderFindTest extends TestCase
         $this->assertArrayHasKey('orderItems', $responseData);
         $this->assertIsArray($responseData['orderItems']);
 
-        if (!empty($responseData['orderItems'])) {
+        if (! empty($responseData['orderItems'])) {
             foreach ($responseData['orderItems'] as $orderItem) {
                 $this->assertIsArray($orderItem);
                 $this->assertArrayHasKey('name', $orderItem);
@@ -149,7 +148,7 @@ class OrderFindTest extends TestCase
 
         $response->assertStatus(404);
         $response->assertJson([
-            'error' => 'Order not found'
+            'error' => 'Order not found',
         ]);
     }
 
@@ -170,7 +169,7 @@ class OrderFindTest extends TestCase
             $response->assertJsonStructure([
                 'message',
                 'error',
-                'type'
+                'type',
             ]);
 
             $responseData = $response->json();
@@ -198,7 +197,7 @@ class OrderFindTest extends TestCase
             $response->assertJsonStructure([
                 'message',
                 'error',
-                'type'
+                'type',
             ]);
 
             $responseData = $response->json();
@@ -253,7 +252,7 @@ class OrderFindTest extends TestCase
 
         $this->assertMatchesRegularExpression('/^[0-9A-Z]{26}$/', $responseData['id']);
 
-        $validStatuses = array_map(fn($status) => $status->value, OrderStatus::cases());
+        $validStatuses = array_map(fn ($status) => $status->value, OrderStatus::cases());
         $this->assertContains($responseData['status'], $validStatuses);
     }
 

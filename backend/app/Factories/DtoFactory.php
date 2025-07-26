@@ -11,7 +11,8 @@ class DtoFactory
 
     public function create(Dtos $dtoName, array $data = []): Dto
     {
-        $className = $this->dtoNamespace . $dtoName->value;
+        $className = $this->dtoNamespace.$dtoName->value;
+
         return new $className($data);
 
     }

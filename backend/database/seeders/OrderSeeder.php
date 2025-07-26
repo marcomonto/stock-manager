@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\Order;
 use App\Enums\OrderStatus;
+use App\Models\Order;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
@@ -13,7 +13,7 @@ class OrderSeeder extends Seeder
     {
         $orders = [
             [
-                'id' => "01HV5R2K3M4N5P6Q7R8S9T0U1V",
+                'id' => '01HV5R2K3M4N5P6Q7R8S9T0U1V',
                 'name' => 'Ordine Gaming Setup',
                 'description' => 'Ordine completo per setup gaming con console, cuffie e accessori per streaming professionale.',
                 'status' => OrderStatus::DELIVERED,

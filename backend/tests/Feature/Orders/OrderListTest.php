@@ -84,7 +84,7 @@ class OrderListTest extends TestCase
         $response->assertJsonCount(10);
 
         $response->assertJsonStructure([
-            '*' => $this->responseStructure
+            '*' => $this->responseStructure,
         ]);
 
         $responseFirstFive = $this->get("$baseQuery?page=1&rowsPerPage=5");
@@ -131,7 +131,7 @@ class OrderListTest extends TestCase
         $response->assertJsonCount(5);
 
         $response->assertJsonStructure([
-            '*' => $this->responseStructureWithDetails
+            '*' => $this->responseStructureWithDetails,
         ]);
 
         $orders = $response->json();
@@ -140,7 +140,7 @@ class OrderListTest extends TestCase
 
             $this->assertIsArray($order['orderItems']);
 
-            if (!empty($order['orderItems'])) {
+            if (! empty($order['orderItems'])) {
                 foreach ($order['orderItems'] as $orderItem) {
                     $this->assertArrayHasKeys(['name', 'quantity', 'createdAt', 'updatedAt'], $orderItem);
                     $this->assertIsString($orderItem['name']);
@@ -159,7 +159,7 @@ class OrderListTest extends TestCase
         $response->assertStatus(200);
 
         $orders = $response->json();
-        if (!empty($orders)) {
+        if (! empty($orders)) {
             foreach ($orders as $order) {
                 $this->assertStringContainsString('Gaming', $order['name']);
             }
@@ -169,7 +169,7 @@ class OrderListTest extends TestCase
         $response->assertStatus(200);
 
         $orders = $response->json();
-        if (!empty($orders)) {
+        if (! empty($orders)) {
             foreach ($orders as $order) {
                 $this->assertEquals(OrderStatus::DELIVERED->value, $order['status']);
             }
@@ -179,7 +179,7 @@ class OrderListTest extends TestCase
         $response->assertStatus(200);
 
         $orders = $response->json();
-        if (!empty($orders)) {
+        if (! empty($orders)) {
             foreach ($orders as $order) {
                 $this->assertStringContainsString('gaming', strtolower($order['description']));
             }

@@ -3,7 +3,6 @@
 namespace App\Http\Requests;
 
 use App\Dtos\UpdateOrderDto;
-use App\Enums\Dtos;
 use App\Utils\ValidationPatterns;
 
 class UpdateOrderRequest extends StockRequest
@@ -25,6 +24,7 @@ class UpdateOrderRequest extends StockRequest
             'description' => ValidationPatterns::STRING_REQUIRED_255,
         ];
     }
+
     public function prepareForValidation(): void
     {
         $this->merge([

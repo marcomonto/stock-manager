@@ -18,13 +18,14 @@ class OrderUseCase
     public function __construct(
         protected UnitOfWork $unitOfWork,
         protected OrderService $orderService,
-    ){}
+    ) {}
 
     /**
      * @throws \Exception
      */
-    public function create(CreateOrderDto $dto): void{
-        try{
+    public function create(CreateOrderDto $dto): void
+    {
+        try {
             $this->unitOfWork->begin();
             $this->orderService->create(
                 $dto->orderItems,
@@ -32,8 +33,7 @@ class OrderUseCase
                 $dto->description,
             );
             $this->unitOfWork->save();
-        }
-        catch (\Exception $exception){
+        } catch (\Exception $exception) {
             $this->unitOfWork->discard();
             throw $exception;
         }
@@ -42,8 +42,9 @@ class OrderUseCase
     /**
      * @throws \Exception
      */
-    public function update(UpdateOrderDto $dto): void{
-        try{
+    public function update(UpdateOrderDto $dto): void
+    {
+        try {
             $this->unitOfWork->begin();
             $orderToUpdate = $this->orderService->find($dto->orderId);
             $this->orderService->update(
@@ -53,50 +54,52 @@ class OrderUseCase
                 $dto->description,
             );
             $this->unitOfWork->save();
-        }
-        catch (\Exception $exception){
+        } catch (\Exception $exception) {
             $this->unitOfWork->discard();
             throw $exception;
         }
     }
 
-
     /**
      * @throws \Exception
      */
-    public function delete(DeleteOrderDto $dto): void {
-        try{
+    public function delete(DeleteOrderDto $dto): void
+    {
+        try {
             $this->unitOfWork->begin();
             $this->orderService->delete(
                 $dto->orderId
             );
             $this->unitOfWork->save();
-        }
-        catch (\Exception $exception){
+        } catch (\Exception $exception) {
             $this->unitOfWork->discard();
             throw $exception;
         }
     }
 
-    public function find(FindOrderDto $dto): Order {
+    public function find(FindOrderDto $dto): Order
+    {
         return $this->orderService->find(
             $dto->orderId
         );
     }
 
-    public function get(FindOrderDto $dto): ?Order {
+    public function get(FindOrderDto $dto): ?Order
+    {
         return $this->orderService->get(
             $dto->orderId
         );
     }
 
-    public function list(ListOrderDto $dto): Collection{
-        if (isset($dto->page) && isset($dto->rowsPerPage)){
+    public function list(ListOrderDto $dto): Collection
+    {
+        if (isset($dto->page) && isset($dto->rowsPerPage)) {
             $paginationOptions = new PaginationOptions(
                 $dto->page,
                 $dto->rowsPerPage,
             );
         }
+
         return $this->orderService->list(
             name: $dto->name,
             description: $dto->description,
@@ -104,6 +107,4 @@ class OrderUseCase
             paginationOptions: $paginationOptions ?? null,
         );
     }
-
-
 }

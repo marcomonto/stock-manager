@@ -4,7 +4,6 @@ namespace App\Http\Requests;
 
 use App\Dtos\FindOrderDto;
 use App\Utils\ValidationPatterns;
-use Illuminate\Support\Facades\Log;
 
 /**
  * @OA\Parameter(
@@ -13,6 +12,7 @@ use Illuminate\Support\Facades\Log;
  *     in="query",
  *     required=false,
  *     description="Include detailed order information with related items",
+ *
  *     @OA\Schema(
  *         type="boolean",
  *         example=true,
@@ -38,8 +38,8 @@ class FindOrderRequest extends StockRequest
     public function prepareForValidation(): void
     {
         $this->merge([
-           'orderId' => $this->route('orderId'),
-           'withDetails' => $this->query('withDetails'),
+            'orderId' => $this->route('orderId'),
+            'withDetails' => $this->query('withDetails'),
         ]);
     }
 

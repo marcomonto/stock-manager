@@ -5,7 +5,6 @@ namespace App\Http\Requests;
 use App\Dtos\ListOrderDto;
 use App\Utils\ValidationPatterns;
 
-
 /**
  * @OA\Parameter(
  *     parameter="ListOrdersPage",
@@ -13,6 +12,7 @@ use App\Utils\ValidationPatterns;
  *     in="query",
  *     required=true,
  *     description="Page number for pagination",
+ *
  *     @OA\Schema(type="integer", minimum=1, example=1)
  * )
  *
@@ -22,6 +22,7 @@ use App\Utils\ValidationPatterns;
  *     in="query",
  *     required=true,
  *     description="Number of items per page",
+ *
  *     @OA\Schema(type="integer", minimum=1, maximum=100, example=10)
  * )
  *
@@ -31,6 +32,7 @@ use App\Utils\ValidationPatterns;
  *     in="query",
  *     required=false,
  *     description="Filter orders by name (partial match)",
+ *
  *     @OA\Schema(type="string", maxLength=255, example="Urgent delivery")
  * )
  *
@@ -40,6 +42,7 @@ use App\Utils\ValidationPatterns;
  *     in="query",
  *     required=false,
  *     description="Filter orders by description (partial match)",
+ *
  *     @OA\Schema(type="string", maxLength=255, example="Mr.Rossi")
  * )
  *
@@ -49,6 +52,7 @@ use App\Utils\ValidationPatterns;
  *     in="query",
  *     required=false,
  *     description="Filter orders by creation date",
+ *
  *     @OA\Schema(type="string", format="date", example="2024-01-15")
  * )
  *
@@ -58,6 +62,7 @@ use App\Utils\ValidationPatterns;
  *     in="query",
  *     required=false,
  *     description="Include detailed order information",
+ *
  *     @OA\Schema(type="boolean", example=true)
  * )
  */
@@ -91,7 +96,7 @@ class ListOrdersRequest extends StockRequest
             rowsPerPage: $this->validated('rowsPerPage'),
             name: $this->validated('name'),
             description: $this->validated('description'),
-            creationDate: !empty($this->validated('creationDate')) ?
+            creationDate: ! empty($this->validated('creationDate')) ?
                 new \DateTime($this->validated('creationDate')) :
                 null,
         );

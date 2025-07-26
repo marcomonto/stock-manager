@@ -28,8 +28,8 @@ class OrderCreateTest extends TestCase
             'description' => 'Test order description',
             'orderItems' => [
                 [$product1->id, 3],
-                [$product2->id, 5]
-            ]
+                [$product2->id, 5],
+            ],
         ];
 
         $response = $this->postJson('api/orders', $orderData);
@@ -39,7 +39,7 @@ class OrderCreateTest extends TestCase
         $this->assertDatabaseHas('orders', [
             'name' => 'Test Order',
             'description' => 'Test order description',
-            'status' => OrderStatus::DELIVERED->value
+            'status' => OrderStatus::DELIVERED->value,
         ]);
 
         $product1->refresh();
@@ -62,8 +62,8 @@ class OrderCreateTest extends TestCase
             'name' => 'Single Product Order',
             'description' => 'Order with only one product',
             'orderItems' => [
-                [$product->id, 10]
-            ]
+                [$product->id, 10],
+            ],
         ];
 
         $response = $this->postJson('api/orders', $orderData);
@@ -72,7 +72,7 @@ class OrderCreateTest extends TestCase
 
         $this->assertDatabaseHas('orders', [
             'name' => 'Single Product Order',
-            'description' => 'Order with only one product'
+            'description' => 'Order with only one product',
         ]);
 
         $product->refresh();
@@ -95,7 +95,7 @@ class OrderCreateTest extends TestCase
                 [$product1->id, 5],
                 [$product2->id, 3],
                 [$product1->id, 2],
-            ]
+            ],
         ];
 
         $response = $this->postJson('api/orders', $orderData);
@@ -103,17 +103,17 @@ class OrderCreateTest extends TestCase
         $response->assertStatus(422);
 
         $this->assertDatabaseMissing('orders', [
-            'name' => 'Multiple Products Order'
+            'name' => 'Multiple Products Order',
         ]);
         $product1->refresh();
         $product2->refresh();
         $this->assertEquals(100, $product1->stock_quantity);
         $this->assertEquals(50, $product2->stock_quantity);
         $this->assertDatabaseMissing('order_items', [
-            'product_id' => $product1->id
+            'product_id' => $product1->id,
         ]);
         $this->assertDatabaseMissing('order_items', [
-            'product_id' => $product2->id
+            'product_id' => $product2->id,
         ]);
     }
 
@@ -125,8 +125,8 @@ class OrderCreateTest extends TestCase
             'name' => 'Insufficient Stock Order',
             'description' => 'This should fail',
             'orderItems' => [
-                [$product->id, 10]
-            ]
+                [$product->id, 10],
+            ],
         ];
 
         $response = $this->postJson('api/orders', $orderData);
@@ -134,7 +134,7 @@ class OrderCreateTest extends TestCase
         $response->assertStatus(422);
 
         $this->assertDatabaseMissing('orders', [
-            'name' => 'Insufficient Stock Order'
+            'name' => 'Insufficient Stock Order',
         ]);
 
         $product->refresh();
@@ -149,8 +149,8 @@ class OrderCreateTest extends TestCase
             'name' => 'Non-existing Product Order',
             'description' => 'This should fail',
             'orderItems' => [
-                [$fakeProductId, 1]
-            ]
+                [$fakeProductId, 1],
+            ],
         ];
 
         $response = $this->postJson('api/orders', $orderData);
@@ -158,7 +158,7 @@ class OrderCreateTest extends TestCase
         $response->assertStatus(422);
 
         $this->assertDatabaseMissing('orders', [
-            'name' => 'Non-existing Product Order'
+            'name' => 'Non-existing Product Order',
         ]);
     }
 
@@ -167,22 +167,22 @@ class OrderCreateTest extends TestCase
         $response = $this->postJson('api/orders', [
             'description' => 'Test description',
             'orderItems' => [
-                [Product::factory()->create()->id, 1]
-            ]
+                [Product::factory()->create()->id, 1],
+            ],
         ]);
         $response->assertStatus(400);
 
         $response = $this->postJson('api/orders', [
             'name' => 'Test name',
             'orderItems' => [
-                [Product::factory()->create()->id, 1]
-            ]
+                [Product::factory()->create()->id, 1],
+            ],
         ]);
         $response->assertStatus(400);
 
         $response = $this->postJson('api/orders', [
             'name' => 'Test name',
-            'description' => 'Test description'
+            'description' => 'Test description',
         ]);
         $response->assertStatus(400);
     }
@@ -194,14 +194,14 @@ class OrderCreateTest extends TestCase
         $response = $this->postJson('api/orders', [
             'name' => 'Test Order',
             'description' => 'Test description',
-            'orderItems' => 'invalid'
+            'orderItems' => 'invalid',
         ]);
         $response->assertStatus(400);
 
         $response = $this->postJson('api/orders', [
             'name' => 'Test Order',
             'description' => 'Test description',
-            'orderItems' => []
+            'orderItems' => [],
         ]);
         $response->assertStatus(400);
 
@@ -210,8 +210,8 @@ class OrderCreateTest extends TestCase
             'name' => 'Test Order',
             'description' => 'Test description',
             'orderItems' => [
-                [$product->id]
-            ]
+                [$product->id],
+            ],
         ]);
         $response->assertStatus(400);
 
@@ -219,8 +219,8 @@ class OrderCreateTest extends TestCase
             'name' => 'Test Order',
             'description' => 'Test description',
             'orderItems' => [
-                ['invalid-ulid', 1]
-            ]
+                ['invalid-ulid', 1],
+            ],
         ]);
         $response->assertStatus(400);
 
@@ -228,8 +228,8 @@ class OrderCreateTest extends TestCase
             'name' => 'Test Order',
             'description' => 'Test description',
             'orderItems' => [
-                [$product->id, -1]
-            ]
+                [$product->id, -1],
+            ],
         ]);
         $response->assertStatus(400);
 
@@ -237,8 +237,8 @@ class OrderCreateTest extends TestCase
             'name' => 'Test Order',
             'description' => 'Test description',
             'orderItems' => [
-                [$product->id, 0]
-            ]
+                [$product->id, 0],
+            ],
         ]);
         $response->assertStatus(400);
     }
@@ -252,8 +252,8 @@ class OrderCreateTest extends TestCase
             'name' => $longString,
             'description' => 'Valid description',
             'orderItems' => [
-                [$product->id, 1]
-            ]
+                [$product->id, 1],
+            ],
         ]);
         $response->assertStatus(400);
 
@@ -261,8 +261,8 @@ class OrderCreateTest extends TestCase
             'name' => 'Valid name',
             'description' => $longString,
             'orderItems' => [
-                [$product->id, 1]
-            ]
+                [$product->id, 1],
+            ],
         ]);
         $response->assertStatus(400);
     }
@@ -277,8 +277,8 @@ class OrderCreateTest extends TestCase
             'description' => 'This should rollback',
             'orderItems' => [
                 [$product1->id, 3],
-                [$product2->id, 10]
-            ]
+                [$product2->id, 10],
+            ],
         ];
 
         $response = $this->postJson('api/orders', $orderData);
@@ -286,7 +286,7 @@ class OrderCreateTest extends TestCase
         $response->assertStatus(422);
 
         $this->assertDatabaseMissing('orders', [
-            'name' => 'Transaction Test Order'
+            'name' => 'Transaction Test Order',
         ]);
 
         $product1->refresh();
@@ -299,12 +299,12 @@ class OrderCreateTest extends TestCase
     {
         $activeProduct = Product::factory()->create([
             'stock_quantity' => 10,
-            'is_active' => true
+            'is_active' => true,
         ]);
 
         $inactiveProduct = Product::factory()->create([
             'stock_quantity' => 10,
-            'is_active' => false
+            'is_active' => false,
         ]);
 
         $orderData = [
@@ -312,8 +312,8 @@ class OrderCreateTest extends TestCase
             'description' => 'Order with active and inactive products',
             'orderItems' => [
                 [$activeProduct->id, 2],
-                [$inactiveProduct->id, 1]
-            ]
+                [$inactiveProduct->id, 1],
+            ],
         ];
 
         $response = $this->postJson('api/orders', $orderData);
@@ -329,8 +329,8 @@ class OrderCreateTest extends TestCase
             'name' => 'Response Format Test',
             'description' => 'Testing response format',
             'orderItems' => [
-                [$product->id, 1]
-            ]
+                [$product->id, 1],
+            ],
         ];
 
         $response = $this->postJson('api/orders', $orderData);
@@ -348,8 +348,8 @@ class OrderCreateTest extends TestCase
             'name' => 'Large Quantity Order',
             'description' => 'Order with large quantity',
             'orderItems' => [
-                [$product->id, 999]
-            ]
+                [$product->id, 999],
+            ],
         ];
 
         $response = $this->postJson('api/orders', $orderData);
@@ -368,8 +368,8 @@ class OrderCreateTest extends TestCase
             'name' => 'Exact Stock Order',
             'description' => 'Order that uses exact available stock',
             'orderItems' => [
-                [$product->id, 5]
-            ]
+                [$product->id, 5],
+            ],
         ];
 
         $response = $this->postJson('api/orders', $orderData);

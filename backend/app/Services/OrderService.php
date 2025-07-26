@@ -5,7 +5,6 @@ namespace App\Services;
 use _PHPStan_e7febc360\Nette\InvalidArgumentException;
 use App\Enums\OrderStatus;
 use App\Models\Order;
-use App\Models\OrderItem;
 use App\Models\Product;
 use App\Utils\PaginationOptions;
 use Illuminate\Support\Collection;
@@ -14,11 +13,10 @@ use Illuminate\Support\Str;
 class OrderService
 {
     public function create(
-        array  $orderItems,
+        array $orderItems,
         string $name,
         string $description,
-    ): Order
-    {
+    ): Order {
         $productIds = collect($orderItems)
             ->pluck(0)
             ->unique()
@@ -39,19 +37,19 @@ class OrderService
         foreach ($orderItems as [$productId, $quantity]) {
             $product = $products->get($productId);
 
-            if (!$product) {
+            if (! $product) {
                 throw new InvalidArgumentException("Product not present with given id: $productId");
             }
 
-            if (!$product->is_active) {
+            if (! $product->is_active) {
                 throw new InvalidArgumentException("Product $product->name not active");
             }
 
             if ($product->stock_quantity < $quantity) {
                 throw new InvalidArgumentException("Insufficient Quantity for $product->name");
             }
-            if (!empty($itemsToAttach[$productId])) {
-                throw new InvalidArgumentException("Multiple products with same id");
+            if (! empty($itemsToAttach[$productId])) {
+                throw new InvalidArgumentException('Multiple products with same id');
             }
             $product->decrement('stock_quantity', $quantity);
             $itemsToAttach[$productId] = ['quantity' => $quantity];
@@ -64,18 +62,18 @@ class OrderService
                 'description' => $description,
             ]);
         $order->products()->attach($itemsToAttach);
+
         return $order;
     }
 
     public function update(
-        Order  $order,
-        array  $orderItems,
+        Order $order,
+        array $orderItems,
         string $name,
         string $description,
-    ): Order
-    {
-        if (!$order->canBeModified()) {
-            throw new InvalidArgumentException("Order cannot be modified in current status");
+    ): Order {
+        if (! $order->canBeModified()) {
+            throw new InvalidArgumentException('Order cannot be modified in current status');
         }
 
         $this->_restoreStockForOrderItems($order);
@@ -97,20 +95,20 @@ class OrderService
         foreach ($orderItems as [$productId, $quantity]) {
             $product = $products->get($productId);
 
-            if (!$product) {
+            if (! $product) {
                 throw new InvalidArgumentException("Product {$productId} not found");
             }
 
-            if (!$product->is_active) {
+            if (! $product->is_active) {
                 throw new InvalidArgumentException("Product $product->name not active");
             }
 
-            if (!$product->hasStock($quantity)) {
+            if (! $product->hasStock($quantity)) {
                 throw new InvalidArgumentException("Insufficient stock for product {$productId}");
             }
 
-            if (!empty($itemsToSync[$productId])) {
-                throw new InvalidArgumentException("Multiple products with same id");
+            if (! empty($itemsToSync[$productId])) {
+                throw new InvalidArgumentException('Multiple products with same id');
             }
 
             $product->decrement('stock_quantity', $quantity);
@@ -122,28 +120,28 @@ class OrderService
         ]);
 
         $order->products()->sync($itemsToSync);
+
         return $order;
     }
 
     public function updateStatus(
-        Order       $order,
+        Order $order,
         OrderStatus $newStatus
-    ): Order
-    {
+    ): Order {
         $order->update(['status' => $newStatus]);
+
         return $order;
     }
 
     public function delete(
         string $orderId,
-    ): Order
-    {
+    ): Order {
         $order = $this->find($orderId);
         if ($order->trashed() || $order->status === OrderStatus::CANCELLED) {
             return $order;
         }
-        if (!$order->canBeModified()) {
-            throw new InvalidArgumentException("Order cannot be cancelled in current status");
+        if (! $order->canBeModified()) {
+            throw new InvalidArgumentException('Order cannot be cancelled in current status');
         }
         $this->_restoreStockForOrderItems($order);
         $order->update(['status' => OrderStatus::CANCELLED]);
@@ -153,18 +151,17 @@ class OrderService
     }
 
     public function list(
-        ?string            $name = null,
-        ?string            $description = null,
-        ?\DateTime         $creationDate = null,
+        ?string $name = null,
+        ?string $description = null,
+        ?\DateTime $creationDate = null,
         ?PaginationOptions $paginationOptions = null,
-    ): Collection
-    {
+    ): Collection {
         $query = Order::query();
         if ($name) {
-            $query->where('name', 'like', '%' . $name . '%');
+            $query->where('name', 'like', '%'.$name.'%');
         }
         if ($description) {
-            $query->where('description', 'like', '%' . $description . '%');
+            $query->where('description', 'like', '%'.$description.'%');
         }
         if ($creationDate) {
             $query->whereDate('creation_date', $creationDate->format('Y-m-d'));
@@ -177,18 +174,19 @@ class OrderService
 
             return collect($paginator->items());
         }
+
         return $query->get();
     }
-
 
     public function find(string $id): Order
     {
         $order = Order::query()
             ->where('id', $id)
             ->first();
-        if (!$order) {
+        if (! $order) {
             throw new InvalidArgumentException("Order {$id} not found");
         }
+
         return $order;
     }
 

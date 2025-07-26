@@ -20,9 +20,7 @@ class OrderController extends Controller
 {
     public function __construct(
         protected OrderUseCase $orderUseCase,
-    )
-    {
-    }
+    ) {}
 
     /**
      * @OA\Get(
@@ -30,21 +28,27 @@ class OrderController extends Controller
      *     tags={"Orders"},
      *     summary="List orders with optional filtering and pagination",
      *     description="Retrieve a list of orders with optional filters for name, description, creation date and pagination support",
+     *
      *     @OA\Parameter(ref="#/components/parameters/ListOrdersPage"),
      *     @OA\Parameter(ref="#/components/parameters/ListOrdersRowsPerPage"),
      *     @OA\Parameter(ref="#/components/parameters/ListOrdersName"),
      *     @OA\Parameter(ref="#/components/parameters/ListOrdersDescription"),
      *     @OA\Parameter(ref="#/components/parameters/ListOrdersCreationDate"),
      *     @OA\Parameter(ref="#/components/parameters/ListOrdersWithDetails"),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="List of orders retrieved successfully",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(
      *                 property="data",
      *                 type="array",
      *                 description="Array of orders",
+     *
      *                 @OA\Items(
+     *
      *                     @OA\Property(property="id", type="string", format="ulid", description="Order ID", example="01HV5R2K3M4N5P6Q7R8S9T0U1V"),
      *                     @OA\Property(property="name", type="string", description="Order name", example="Urgent delivery"),
      *                     @OA\Property(property="description", type="string", description="Order description", example="Order for Mr.Rossi in Catanzaro"),
@@ -55,7 +59,9 @@ class OrderController extends Controller
      *                         property="orderItems",
      *                         type="array",
      *                         description="Order items (included when withDetails=true)",
+     *
      *                         @OA\Items(
+     *
      *                             @OA\Property(property="quantity", type="integer", description="Quantity ordered", example=2),
      *                             @OA\Property(property="name", type="string", description="Product name", example="Laptop Dell XPS"),
      *                             @OA\Property(property="createdAt", type="string", format="date-time", description="Item creation timestamp", example="2024-01-15 10:30:00"),
@@ -66,10 +72,12 @@ class OrderController extends Controller
      *             )
      *         )
      *     ),
+     *
      *     @OA\Response(response=400, ref="#/components/responses/ValidationError"),
      *     @OA\Response(response=422, ref="#/components/responses/InvalidArgument"),
      *     @OA\Response(response=500, ref="#/components/responses/ServerError")
      * )
+     *
      * @throws \DateMalformedStringException
      */
     public function list(ListOrdersRequest $request): JsonResponse
@@ -77,9 +85,10 @@ class OrderController extends Controller
         $orders = $this->orderUseCase->list(
             $request->toDto()
         );
+
         return response()->json(
             data: $orders->map(
-                fn($order) => $order->toArrayResponse(
+                fn ($order) => $order->toArrayResponse(
                     withDetails: $request->toDto()->withDetails
                 )
             )
@@ -92,18 +101,24 @@ class OrderController extends Controller
      *     tags={"Orders"},
      *     summary="Get a specific order by ID",
      *     description="Retrieve detailed information about a specific order using its unique identifier",
+     *
      *     @OA\Parameter(
      *         name="orderId",
      *         in="path",
      *         required=true,
      *         description="The unique identifier of the order",
+     *
      *         @OA\Schema(type="string", format="ulid", example="01HV5R2K3M4N5P6Q7R8S9T0U1V")
      *     ),
+     *
      *     @OA\Parameter(ref="#/components/parameters/FindOrderWithDetails"),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Order details retrieved successfully",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(
      *                 property="data",
      *                 type="object",
@@ -118,7 +133,9 @@ class OrderController extends Controller
      *                     property="orderItems",
      *                     type="array",
      *                     description="Order items (included when withDetails=true)",
+     *
      *                     @OA\Items(
+     *
      *                         @OA\Property(property="productName", type="string", format="ulid", description="Order item ID", example="01HW6S3L4N5O6P7Q8R9S0T1U2W"),
      *                         @OA\Property(property="quantity", type="integer", description="Quantity ordered", example=2),
      *                         @OA\Property(property="createdAt", type="string", format="date-time", description="Item creation timestamp", example="2024-01-15 10:30:00"),
@@ -128,13 +145,17 @@ class OrderController extends Controller
      *             )
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=404,
      *         description="Order not found",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="error", type="string", example="Order not found")
      *         )
      *     ),
+     *
      *     @OA\Response(response=400, ref="#/components/responses/ValidationError"),
      *     @OA\Response(response=500, ref="#/components/responses/ServerError")
      * )
@@ -150,6 +171,7 @@ class OrderController extends Controller
                 404
             );
         }
+
         return response()->json(
             data: $order->toArrayResponse(
                 withDetails: $request->toDto()->withDetails
@@ -163,15 +185,19 @@ class OrderController extends Controller
      *     path="/api/orders",
      *     tags={"Orders"},
      *     summary="Create new order",
+     *
      *     @OA\RequestBody(
      *         required=true,
+     *
      *         @OA\JsonContent(ref="#/components/schemas/CreateOrderRequest")
      *     ),
+     *
      *     @OA\Response(response=201, description="Order created successfully"),
      *     @OA\Response(response=400, ref="#/components/responses/ValidationError"),
      *     @OA\Response(response=422, ref="#/components/responses/InvalidArgument"),
      *     @OA\Response(response=500, ref="#/components/responses/ServerError")
      * )
+     *
      * @throws \Exception
      */
     public function create(CreateOrderRequest $request): JsonResponse
@@ -179,6 +205,7 @@ class OrderController extends Controller
         $this->orderUseCase->create(
             $request->toDto()
         );
+
         return response()->json(
             status: 201
         );
@@ -190,22 +217,29 @@ class OrderController extends Controller
      *     path="/api/orders/{orderId}",
      *     tags={"Orders"},
      *     summary="Aggiorna un ordine",
+     *
      *     @OA\Parameter(
      *         name="orderId",
      *         in="path",
      *         required=true,
+     *
      *         @OA\Schema(type="integer")
      *     ),
+     *
      *     @OA\RequestBody(
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="status", type="string", example="shipped")
      *         )
      *     ),
+     *
      *      @OA\Response(response=200, description="Order updated successfully"),
      *      @OA\Response(response=400, ref="#/components/responses/ValidationError"),
      *      @OA\Response(response=422, ref="#/components/responses/InvalidArgument"),
      *      @OA\Response(response=500, ref="#/components/responses/ServerError")
      * )
+     *
      * @throws \Exception
      */
     public function update(UpdateOrderRequest $request): JsonResponse
@@ -214,6 +248,7 @@ class OrderController extends Controller
             ->update(
                 $request->toDto()
             );
+
         return response()->json(
             status: 201
         );
@@ -226,20 +261,26 @@ class OrderController extends Controller
      *     summary="Delete Order",
      *     description="Delete order, and products' stock quantities are incremented.",
      *     operationId="deleteOrder",
+     *
      *     @OA\Parameter(ref="#/components/parameters/orderId"),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Order deleted successfully",
+     *
      *         @OA\JsonContent(
      *             type="object",
      *             description="Empty response on success"
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=404,
      *         description="Order not found",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(
      *                 property="message",
      *                 type="string",
@@ -257,10 +298,12 @@ class OrderController extends Controller
      *             )
      *         )
      *     ),
+     *
      *     @OA\Response(response=400, ref="#/components/responses/ValidationError"),
      *     @OA\Response(response=422, ref="#/components/responses/InvalidArgument"),
      *     @OA\Response(response=500, ref="#/components/responses/ServerError")
      * )
+     *
      * @throws \Exception
      */
     public function delete(DeleteOrderRequest $request): JsonResponse
@@ -268,6 +311,7 @@ class OrderController extends Controller
         $this->orderUseCase->delete(
             $request->toDto()
         );
+
         return response()->json();
     }
 }

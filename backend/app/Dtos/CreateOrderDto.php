@@ -5,12 +5,10 @@ namespace App\Dtos;
 readonly class CreateOrderDto implements Dto
 {
     public function __construct(
-        public array  $orderItems,
+        public array $orderItems,
         public string $name,
         public string $description,
-    )
-    {
-    }
+    ) {}
 
     public function toArray(): array
     {

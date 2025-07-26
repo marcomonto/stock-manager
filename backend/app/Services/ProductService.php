@@ -10,8 +10,7 @@ class ProductService
     public function isAvailable(
         Product $product,
         int $quantity = 1,
-    ): bool
-    {
+    ): bool {
         return $product->is_active
             && $product->hasStock($quantity);
     }
@@ -19,24 +18,21 @@ class ProductService
     public function decrementStock(
         Product $product,
         int $quantity,
-    ): void
-    {
+    ): void {
         if ($product->hasStock($quantity)) {
             $product->update([
-                'stock_quantity' => $product->stock_quantity - $quantity
+                'stock_quantity' => $product->stock_quantity - $quantity,
             ]);
         }
-        throw new InvalidArgumentException();
+        throw new InvalidArgumentException;
     }
 
     public function incrementStock(
         Product $product,
         int $quantity,
-    ): void
-    {
+    ): void {
         $product->update([
-            'stock_quantity' => $product->stock_quantity + $quantity
+            'stock_quantity' => $product->stock_quantity + $quantity,
         ]);
     }
-
 }

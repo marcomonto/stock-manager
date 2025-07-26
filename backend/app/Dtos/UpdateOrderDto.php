@@ -2,17 +2,14 @@
 
 namespace App\Dtos;
 
-use App\Dtos\Dto;
-
 readonly class UpdateOrderDto implements Dto
 {
     public function __construct(
         public string $orderId,
-        public array   $orderItems,
+        public array $orderItems,
         public string $name,
         public string $description,
-    )
-    {}
+    ) {}
 
     public function toArray(): array
     {

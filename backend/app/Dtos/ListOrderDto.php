@@ -11,7 +11,7 @@ readonly class ListOrderDto implements Dto
         public ?string $name = null,
         public ?string $description = null,
         public ?\DateTime $creationDate = null,
-    ){}
+    ) {}
 
     public function toArray(): array
     {

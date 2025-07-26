@@ -18,7 +18,7 @@ class OrderFactory extends Factory
     {
         return [
             'id' => strtoupper(Str::ulid()),
-            'name' => 'Ordine ' . fake()->words(2, true),
+            'name' => 'Ordine '.fake()->words(2, true),
             'description' => fake()->sentence(8),
             'status' => fake()->randomElement(OrderStatus::cases()),
         ];

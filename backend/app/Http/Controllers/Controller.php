@@ -10,10 +10,13 @@ namespace App\Http\Controllers;
  * )
  *
  * @OA\Components(
+ *
  *      @OA\Response(
  *          response="ValidationError",
  *          description="Validation error",
+ *
  *          @OA\JsonContent(
+ *
  *              @OA\Property(
  *                  property="message",
  *                  type="string",
@@ -31,10 +34,13 @@ namespace App\Http\Controllers;
  *              )
  *          )
  *      ),
+ *
  *      @OA\Response(
  *          response="InvalidArgument",
  *          description="Invalid argument provided",
+ *
  *          @OA\JsonContent(
+ *
  *              @OA\Property(
  *                  property="message",
  *                  type="string",
@@ -52,10 +58,13 @@ namespace App\Http\Controllers;
  *              )
  *          )
  *      ),
+ *
  *      @OA\Response(
  *          response="ServerError",
  *          description="Internal server error",
+ *
  *          @OA\JsonContent(
+ *
  *              @OA\Property(
  *                  property="message",
  *                  type="string",
