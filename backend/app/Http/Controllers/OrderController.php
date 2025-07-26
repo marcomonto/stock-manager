@@ -56,9 +56,10 @@ class OrderController extends Controller
      *                         type="array",
      *                         description="Order items (included when withDetails=true)",
      *                         @OA\Items(
-     *                             @OA\Property(property="productId", type="string", format="ulid", description="Product ID", example="01HW6S3L4N5O6P7Q8R9S0T1U2W"),
      *                             @OA\Property(property="quantity", type="integer", description="Quantity ordered", example=2),
-     *                             @OA\Property(property="productName", type="string", description="Product name", example="Laptop Dell XPS")
+     *                             @OA\Property(property="name", type="string", description="Product name", example="Laptop Dell XPS"),
+     *                             @OA\Property(property="createdAt", type="string", format="date-time", description="Item creation timestamp", example="2024-01-15 10:30:00"),
+     *                             @OA\Property(property="updatedAt", type="string", format="date-time", description="Item update timestamp", example="2024-01-15 10:30:00"),
      *                         )
      *                     )
      *                 )
@@ -118,7 +119,7 @@ class OrderController extends Controller
      *                     type="array",
      *                     description="Order items (included when withDetails=true)",
      *                     @OA\Items(
-     *                         @OA\Property(property="id", type="string", format="ulid", description="Order item ID", example="01HW6S3L4N5O6P7Q8R9S0T1U2W"),
+     *                         @OA\Property(property="productName", type="string", format="ulid", description="Order item ID", example="01HW6S3L4N5O6P7Q8R9S0T1U2W"),
      *                         @OA\Property(property="quantity", type="integer", description="Quantity ordered", example=2),
      *                         @OA\Property(property="createdAt", type="string", format="date-time", description="Item creation timestamp", example="2024-01-15 10:30:00"),
      *                         @OA\Property(property="updatedAt", type="string", format="date-time", description="Item update timestamp", example="2024-01-15 10:30:00")

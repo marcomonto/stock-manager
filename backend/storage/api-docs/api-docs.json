@@ -84,21 +84,27 @@
                                                         "type": "array",
                                                         "items": {
                                                             "properties": {
-                                                                "productId": {
-                                                                    "description": "Product ID",
-                                                                    "type": "string",
-                                                                    "format": "ulid",
-                                                                    "example": "01HW6S3L4N5O6P7Q8R9S0T1U2W"
-                                                                },
                                                                 "quantity": {
                                                                     "description": "Quantity ordered",
                                                                     "type": "integer",
                                                                     "example": 2
                                                                 },
-                                                                "productName": {
+                                                                "name": {
                                                                     "description": "Product name",
                                                                     "type": "string",
                                                                     "example": "Laptop Dell XPS"
+                                                                },
+                                                                "createdAt": {
+                                                                    "description": "Item creation timestamp",
+                                                                    "type": "string",
+                                                                    "format": "date-time",
+                                                                    "example": "2024-01-15 10:30:00"
+                                                                },
+                                                                "updatedAt": {
+                                                                    "description": "Item update timestamp",
+                                                                    "type": "string",
+                                                                    "format": "date-time",
+                                                                    "example": "2024-01-15 10:30:00"
                                                                 }
                                                             },
                                                             "type": "object"
@@ -229,7 +235,7 @@
                                                     "type": "array",
                                                     "items": {
                                                         "properties": {
-                                                            "id": {
+                                                            "productName": {
                                                                 "description": "Order item ID",
                                                                 "type": "string",
                                                                 "format": "ulid",

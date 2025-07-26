@@ -124,15 +124,16 @@ class OrderService
     ): Order
     {
         $order = $this->find($orderId);
-        if ($order->status === OrderStatus::CANCELLED) {
+        if ($order->trashed() || $order->status === OrderStatus::CANCELLED) {
             return $order;
         }
+        if (!$order->canBeModified()) {
+            throw new InvalidArgumentException("Order cannot be cancelled in current status");
+        }
         $this->_restoreStockForOrderItems($order);
+        $order->update(['status' => OrderStatus::CANCELLED]);
+        $order->delete();
 
-        $this->updateStatus(
-            $order,
-            OrderStatus::CANCELLED
-        );
         return $order;
     }
 
