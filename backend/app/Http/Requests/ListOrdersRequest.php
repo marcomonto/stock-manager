@@ -25,7 +25,7 @@ class ListOrdersRequest extends StockRequest
         ];
     }
 
-    public function toDto(): Dto
+    public function toDto(): ListOrderDto
     {
         return new ListOrderDto(
           withDetails: !empty($this->validated('withDetails')),

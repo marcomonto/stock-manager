@@ -5,16 +5,19 @@ namespace App\Dtos;
 readonly class CreateOrderDto implements Dto
 {
     public function __construct(
-        public array   $orderItems,
-        public ?string $notes = null,
+        public array  $orderItems,
+        public string $name,
+        public string $description,
     )
-    {}
+    {
+    }
 
     public function toArray(): array
     {
         return [
             'orderItems' => $this->orderItems,
-            'notes' => $this->notes,
+            'name' => $this->name,
+            'description' => $this->description,
         ];
     }
 }

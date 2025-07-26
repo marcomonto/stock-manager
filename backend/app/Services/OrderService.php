@@ -7,13 +7,16 @@ use App\Enums\OrderStatus;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
+use App\Utils\PaginationOptions;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 class OrderService
 {
     public function create(
         array   $orderItems,
-        ?string $notes = null,
+        string $name,
+        string $description,
     ): Order
     {
         $productIds = collect($orderItems)
@@ -23,6 +26,7 @@ class OrderService
             ->values();
 
         // to avoid possible deadlock with multiple requests
+        // on same products
         $products = Product::query()
             ->whereIn('id', $productIds)
             ->orderBy('id')
@@ -49,7 +53,8 @@ class OrderService
             ->create([
                 'id' => Str::ulid(),
                 'status' => OrderStatus::DELIVERED, // For the initial logic the changes are instant
-                'notes' => $notes,
+                'name' => $name,
+                'description' => $description,
             ]);
         $order->products()->attach($itemsToAttach);
         return $order;
@@ -58,7 +63,8 @@ class OrderService
     public function update(
         Order   $order,
         array   $orderItems,
-        ?string $notes = null,
+        string $name,
+        string $description,
     ): Order
     {
         if (!$order->canBeModified()) {
@@ -96,7 +102,8 @@ class OrderService
             $itemsToSync[$productId] = ['quantity' => $quantity];
         }
         $order->update([
-            'notes' => $notes,
+            'name' => $name,
+            'description' => $description,
         ]);
 
         $order->products()->sync($itemsToSync);
@@ -130,10 +137,32 @@ class OrderService
     }
 
     public function list(
-        bool $withDetails = false,
-    ){
+        ?string $name = null,
+        ?string $description = null,
+        ?\DateTime $creationDate = null,
+        ?PaginationOptions $paginationOptions = null,
+    ): Collection {
+        $query = Order::query();
+        if ($name) {
+            $query->where('name', 'like', '%' . $name . '%');
+        }
+        if ($description) {
+            $query->where('description', 'like', '%' . $description . '%');
+        }
+        if ($creationDate) {
+            $query->whereDate('creation_date', $creationDate->format('Y-m-d'));
+        }
+        if ($paginationOptions) {
+            $paginator = $query->simplePaginate(
+                perPage: $paginationOptions->rowsPerPage,
+                page: $paginationOptions->page
+            );
 
+            return collect($paginator->items());
+        }
+        return $query->get();
     }
+
 
     public function find(string $id): Order
     {

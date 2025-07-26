@@ -21,7 +21,8 @@ class UpdateOrderRequest extends StockRequest
             'orderItems.*' => ValidationPatterns::ARRAY_REQUIRED,
             'orderItems.*.0' => ValidationPatterns::ULID_REQUIRED,
             'orderItems.*.1' => ValidationPatterns::INT_REQUIRED_POSITIVE,
-            'notes' => ValidationPatterns::STRING_NULLABLE,
+            'name' => ValidationPatterns::STRING_REQUIRED_255,
+            'description' => ValidationPatterns::STRING_REQUIRED_255,
         ];
     }
 
@@ -30,7 +31,8 @@ class UpdateOrderRequest extends StockRequest
         return new UpdateOrderDto(
             orderId: $this->validated('orderId'),
             orderItems: $this->validated('orderItems'),
-            notes: $this->validated('notes'),
+            name: $this->validated('name'),
+            description: $this->validated('description'),
         );
     }
 }

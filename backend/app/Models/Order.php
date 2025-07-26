@@ -12,7 +12,8 @@ use Illuminate\Support\Carbon;
 
 /**
  * @property string $id
- * @property string|null $notes
+ * @property string $name
+ * @property string $description
  * @property OrderStatus $status
  * @property Carbon $created_at
  * @property Carbon $updated_at
@@ -27,7 +28,8 @@ class Order extends Model
 
     protected $fillable = [
         'id',
-        'notes',
+        'name',
+        'description',
         'status'
     ];
 
@@ -58,7 +60,8 @@ class Order extends Model
     {
         $orderSerialized = [
             'id' => $this->id,
-            'notes' => $this->notes,
+            'name' => $this->name,
+            'description' => $this->description,
             'status' => $this->status->value,
             'createdAt' => $this->created_at->format('Y-m-d H:i:s'),
             'updatedAt' => $this->updated_at->format('Y-m-d H:i:s'),

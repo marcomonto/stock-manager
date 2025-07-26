@@ -33,12 +33,19 @@ use App\Utils\ValidationPatterns;
  *         }
  *     ),
  *     @OA\Property(
- *         property="notes",
+ *         property="name",
  *         type="string",
- *         nullable=true,
- *         description="Optional notes for the order",
- *         example="Consegna urgente richiesta"
- *     )
+ *         nullable=false,
+ *         description="Name for the order",
+ *         example="Urgent delivery"
+ *     ),
+ *      @OA\Property(
+ *          property="description",
+ *          type="string",
+ *          nullable=false,
+ *          description="Description for the order",
+ *          example="Order for Mr.Rossi in Catanzaro"
+ *      )
  * )
  */
 class CreateOrderRequest extends StockRequest
@@ -55,7 +62,8 @@ class CreateOrderRequest extends StockRequest
             'orderItems.*' => ValidationPatterns::ARRAY_REQUIRED,
             'orderItems.*.0' => ValidationPatterns::ULID_REQUIRED,
             'orderItems.*.1' => ValidationPatterns::INT_REQUIRED_POSITIVE,
-            'notes' => ValidationPatterns::STRING_NULLABLE,
+            'name' => ValidationPatterns::STRING_REQUIRED_255,
+            'description' => ValidationPatterns::STRING_REQUIRED_255,
         ];
     }
 
@@ -63,7 +71,8 @@ class CreateOrderRequest extends StockRequest
     {
         return new CreateOrderDto(
             orderItems: $this->validated('orderItems'),
-            notes: $this->validated('notes'),
+            name: $this->validated('name'),
+            description: $this->validated('description'),
         );
     }
 }

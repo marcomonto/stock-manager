@@ -24,7 +24,8 @@ return new class extends Migration
 
         Schema::create('orders', function (Blueprint $table) {
             $table->ulid('id')->primary();
-            $table->text('notes')->nullable();
+            $table->string('name')->index();
+            $table->text('description');
             $table->enum('status',
                 array_map(fn ($case) => $case->value,
                     OrderStatus::cases()

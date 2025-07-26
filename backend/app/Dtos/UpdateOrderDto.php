@@ -9,7 +9,8 @@ readonly class UpdateOrderDto implements Dto
     public function __construct(
         public string $orderId,
         public array   $orderItems,
-        public ?string $notes = null,
+        public string $name,
+        public string $description,
     )
     {}
 
@@ -18,7 +19,8 @@ readonly class UpdateOrderDto implements Dto
         return [
             'orderId' => $this->orderId,
             'orderItems' => $this->orderItems,
-            'notes' => $this->notes,
+            'name' => $this->name,
+            'description' => $this->description,
         ];
     }
 }

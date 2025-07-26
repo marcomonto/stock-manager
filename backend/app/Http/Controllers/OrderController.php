@@ -36,7 +36,17 @@ class OrderController extends Controller
      */
     public function list(ListOrdersRequest $request): JsonResponse
     {
-
+        $orders = $this->orderUseCase->list(
+            $request->toDto()
+        );
+        return response()->json(
+            data: $orders->map(
+                fn($order) => $order->toArrayResponse(
+                    !empty($request->validated('withDetails')
+                    )
+                )
+            )
+        );
     }
 
     /**
