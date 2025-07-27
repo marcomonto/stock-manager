@@ -23,7 +23,7 @@ class OrderService
             ->sort()
             ->values();
 
-        // to avoid possible deadlock with multiple requests
+        // to avoid possible deadlock with multiple concurrent requests
         // on same products, very edgy case, but better handle it
         $products = Product::query()
             ->whereIn('id', $productIds)
@@ -164,7 +164,7 @@ class OrderService
             $query->where('description', 'like', '%'.$description.'%');
         }
         if ($creationDate) {
-            $query->whereDate('creation_date', $creationDate->format('Y-m-d'));
+            $query->whereDate('created_at', $creationDate->format('Y-m-d'));
         }
         if ($paginationOptions) {
             $paginator = $query->simplePaginate(

@@ -1,6 +1,35 @@
-version: '3.8'
-
 services:
+  app:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: stock_manager
+    restart: unless-stopped
+    ports:
+      - "81:80" # I am on ubuntu, to avoid to stop my local apache service, better to set another port
+      - "443:443"
+    environment:
+      - APP_NAME=StockManager
+      - APP_ENV=local
+      - APP_KEY=base64:K1QpQjYoTX6aHYIen7Go9RrBPwp4gxvCIf/NQtZSY5Y=
+      - APP_DEBUG=true
+      - APP_URL=http://localhost:80
+      - DB_CONNECTION=mysql
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_DATABASE=stock
+      - DB_USERNAME=stockAdmin
+      - DB_PASSWORD=passwordAdmin
+      - SESSION_DRIVER=database
+      - CACHE_STORE=database
+      - QUEUE_CONNECTION=database
+      - LOG_CHANNEL=stack
+      - LOG_LEVEL=debug
+    depends_on:
+      - mysql
+    networks:
+      - app_network
+
   mysql:
     image: mysql:8.0
     container_name: mysql_db
@@ -11,15 +40,15 @@ services:
       MYSQL_USER: stockAdmin
       MYSQL_PASSWORD: passwordAdmin
     ports:
-      - "3306:3306"
+      - "3307:3306" # to avoid problems if someone has mysql locally installed
     volumes:
       - mysql_data:/var/lib/mysql
     networks:
-      - mysql_network
+      - app_network
 
 volumes:
   mysql_data:
 
 networks:
-  mysql_network:
+  app_network:
     driver: bridge
