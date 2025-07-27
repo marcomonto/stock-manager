@@ -51,7 +51,7 @@ class OrderUpdateTest extends TestCase
 
         $response = $this->putJson("api/orders/{$order->id}", $updateData);
 
-        $response->assertStatus(201);
+        $response->assertStatus(200);
 
         $order->refresh();
         $this->assertEquals('Updated Order Name', $order->name);
@@ -101,7 +101,7 @@ class OrderUpdateTest extends TestCase
 
         $response = $this->putJson("api/orders/{$order->id}", $updateData);
 
-        $response->assertStatus(201);
+        $response->assertStatus(200);
 
         $product1->refresh();
         $product2->refresh();
@@ -377,7 +377,7 @@ class OrderUpdateTest extends TestCase
 
         $response = $this->putJson("api/orders/{$order->id}", $updateData);
 
-        $response->assertStatus(201);
+        $response->assertStatus(200);
         $response->assertJson([]);
         $response->assertHeader('Content-Type', 'application/json');
     }
@@ -404,7 +404,7 @@ class OrderUpdateTest extends TestCase
 
             $response = $this->putJson("api/orders/{$order->id}", $updateData);
 
-            $response->assertStatus(201);
+            $response->assertStatus(200);
 
             $order->refresh();
             $this->assertEquals("Updated Order - {$status->value}", $order->name);
@@ -435,7 +435,7 @@ class OrderUpdateTest extends TestCase
 
         $response = $this->putJson("api/orders/{$order->id}", $updateData);
 
-        $response->assertStatus(201);
+        $response->assertStatus(200);
 
         $order->refresh();
         $this->assertCount(1, $order->orderItems);

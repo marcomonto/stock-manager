@@ -53,7 +53,6 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $exceptions->render(function (\Exception $e, Request $request) {
             Log::error($e->getMessage());
-
             return response()->json([
                 'message' => 'Internal server error',
             ], 500);

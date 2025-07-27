@@ -8,20 +8,17 @@ use App\Utils\ValidationPatterns;
 /**
  * @OA\Schema(
  *     schema="CreateOrderRequest",
- *     required={"orderItems"},
- *
+ *     required={"orderItems", "name", "description"},
  *     @OA\Property(
  *         property="orderItems",
  *         type="array",
  *         description="Array of order items, each containing product ID and quantity",
- *
  *         @OA\Items(
  *             type="array",
  *             minItems=2,
  *             maxItems=2,
  *             @OA\Items(
  *                 oneOf={
- *
  *                     @OA\Schema(type="string", format="ulid", description="Product ULID"),
  *                     @OA\Schema(type="integer", minimum=1, description="Quantity")
  *                 }
@@ -32,21 +29,20 @@ use App\Utils\ValidationPatterns;
  *             {"01HW6S3L4N5O6P7Q8R9S0T1U2W", 1}
  *         }
  *     ),
- *
  *     @OA\Property(
  *         property="name",
  *         type="string",
- *         nullable=false,
+ *         maxLength=255,
  *         description="Name for the order",
  *         example="Urgent delivery"
  *     ),
- *      @OA\Property(
- *          property="description",
- *          type="string",
- *          nullable=false,
- *          description="Description for the order",
- *          example="Order for Mr.Rossi in Catanzaro"
- *      )
+ *     @OA\Property(
+ *         property="description",
+ *         type="string",
+ *         maxLength=255,
+ *         description="Description for the order",
+ *         example="Order for Mr.Rossi in Catanzaro"
+ *     )
  * )
  */
 class CreateOrderRequest extends StockRequest

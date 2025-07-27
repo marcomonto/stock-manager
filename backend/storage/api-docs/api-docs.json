@@ -13,7 +13,7 @@
                 ],
                 "summary": "List orders with optional filtering and pagination",
                 "description": "Retrieve a list of orders with optional filters for name, description, creation date and pagination support",
-                "operationId": "cb6496a706b15cae633504c9e360ff08",
+                "operationId": "listOrders",
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/ListOrdersPage"
@@ -40,91 +40,17 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "description": "Array of orders",
-                                            "type": "array",
-                                            "items": {
-                                                "properties": {
-                                                    "id": {
-                                                        "description": "Order ID",
-                                                        "type": "string",
-                                                        "format": "ulid",
-                                                        "example": "01HV5R2K3M4N5P6Q7R8S9T0U1V"
-                                                    },
-                                                    "name": {
-                                                        "description": "Order name",
-                                                        "type": "string",
-                                                        "example": "Urgent delivery"
-                                                    },
-                                                    "description": {
-                                                        "description": "Order description",
-                                                        "type": "string",
-                                                        "example": "Order for Mr.Rossi in Catanzaro"
-                                                    },
-                                                    "status": {
-                                                        "description": "Order status",
-                                                        "type": "string",
-                                                        "example": "delivered"
-                                                    },
-                                                    "createdAt": {
-                                                        "description": "Creation timestamp",
-                                                        "type": "string",
-                                                        "format": "date-time",
-                                                        "example": "2024-01-15 10:30:00"
-                                                    },
-                                                    "updatedAt": {
-                                                        "description": "Last update timestamp",
-                                                        "type": "string",
-                                                        "format": "date-time",
-                                                        "example": "2024-01-15 10:30:00"
-                                                    },
-                                                    "orderItems": {
-                                                        "description": "Order items (included when withDetails=true)",
-                                                        "type": "array",
-                                                        "items": {
-                                                            "properties": {
-                                                                "quantity": {
-                                                                    "description": "Quantity ordered",
-                                                                    "type": "integer",
-                                                                    "example": 2
-                                                                },
-                                                                "name": {
-                                                                    "description": "Product name",
-                                                                    "type": "string",
-                                                                    "example": "Laptop Dell XPS"
-                                                                },
-                                                                "createdAt": {
-                                                                    "description": "Item creation timestamp",
-                                                                    "type": "string",
-                                                                    "format": "date-time",
-                                                                    "example": "2024-01-15 10:30:00"
-                                                                },
-                                                                "updatedAt": {
-                                                                    "description": "Item update timestamp",
-                                                                    "type": "string",
-                                                                    "format": "date-time",
-                                                                    "example": "2024-01-15 10:30:00"
-                                                                }
-                                                            },
-                                                            "type": "object"
-                                                        }
-                                                    }
-                                                },
-                                                "type": "object"
-                                            }
-                                        }
-                                    },
-                                    "type": "object"
+                                    "description": "Array of orders",
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/OrderResponse"
+                                    }
                                 }
                             }
                         }
                     },
                     "400": {
                         "$ref": "#/components/responses/ValidationError"
-                    },
-                    "422": {
-                        "$ref": "#/components/responses/InvalidArgument"
                     },
                     "500": {
                         "$ref": "#/components/responses/ServerError"
@@ -135,8 +61,9 @@
                 "tags": [
                     "Orders"
                 ],
-                "summary": "Create new order",
-                "operationId": "ea7f9f7ac84384bee1c0ea5239cfee15",
+                "summary": "Create a new order",
+                "description": "Create a new order with the specified products and quantities. Stock quantities will be decremented automatically.",
+                "operationId": "createOrder",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -149,7 +76,15 @@
                 },
                 "responses": {
                     "201": {
-                        "description": "Order created successfully"
+                        "description": "Order created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "description": "Empty response body on successful creation",
+                                    "type": "object"
+                                }
+                            }
+                        }
                     },
                     "400": {
                         "$ref": "#/components/responses/ValidationError"
@@ -170,18 +105,10 @@
                 ],
                 "summary": "Get a specific order by ID",
                 "description": "Retrieve detailed information about a specific order using its unique identifier",
-                "operationId": "2b061f156e5bf5c98c579eb6800789af",
+                "operationId": "findOrder",
                 "parameters": [
                     {
-                        "name": "orderId",
-                        "in": "path",
-                        "description": "The unique identifier of the order",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "format": "ulid",
-                            "example": "01HV5R2K3M4N5P6Q7R8S9T0U1V"
-                        }
+                        "$ref": "#/components/parameters/FindOrderId"
                     },
                     {
                         "$ref": "#/components/parameters/FindOrderWithDetails"
@@ -193,80 +120,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "description": "Order details",
-                                            "properties": {
-                                                "id": {
-                                                    "description": "Order ID",
-                                                    "type": "string",
-                                                    "format": "ulid",
-                                                    "example": "01HV5R2K3M4N5P6Q7R8S9T0U1V"
-                                                },
-                                                "name": {
-                                                    "description": "Order name",
-                                                    "type": "string",
-                                                    "example": "Urgent delivery"
-                                                },
-                                                "description": {
-                                                    "description": "Order description",
-                                                    "type": "string",
-                                                    "example": "Order for Mr.Rossi in Catanzaro"
-                                                },
-                                                "status": {
-                                                    "description": "Order status",
-                                                    "type": "string",
-                                                    "example": "delivered"
-                                                },
-                                                "createdAt": {
-                                                    "description": "Creation timestamp",
-                                                    "type": "string",
-                                                    "format": "date-time",
-                                                    "example": "2024-01-15 10:30:00"
-                                                },
-                                                "updatedAt": {
-                                                    "description": "Last update timestamp",
-                                                    "type": "string",
-                                                    "format": "date-time",
-                                                    "example": "2024-01-15 10:30:00"
-                                                },
-                                                "orderItems": {
-                                                    "description": "Order items (included when withDetails=true)",
-                                                    "type": "array",
-                                                    "items": {
-                                                        "properties": {
-                                                            "productName": {
-                                                                "description": "Order item ID",
-                                                                "type": "string",
-                                                                "format": "ulid",
-                                                                "example": "01HW6S3L4N5O6P7Q8R9S0T1U2W"
-                                                            },
-                                                            "quantity": {
-                                                                "description": "Quantity ordered",
-                                                                "type": "integer",
-                                                                "example": 2
-                                                            },
-                                                            "createdAt": {
-                                                                "description": "Item creation timestamp",
-                                                                "type": "string",
-                                                                "format": "date-time",
-                                                                "example": "2024-01-15 10:30:00"
-                                                            },
-                                                            "updatedAt": {
-                                                                "description": "Item update timestamp",
-                                                                "type": "string",
-                                                                "format": "date-time",
-                                                                "example": "2024-01-15 10:30:00"
-                                                            }
-                                                        },
-                                                        "type": "object"
-                                                    }
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
+                                    "$ref": "#/components/schemas/OrderResponse"
                                 }
                             }
                         }
@@ -299,36 +153,35 @@
                 "tags": [
                     "Orders"
                 ],
-                "summary": "Aggiorna un ordine",
-                "operationId": "9a7963af207d713e7a4ee52acfa72b7a",
+                "summary": "Update an existing order",
+                "description": "Update an existing order with new products, quantities, name or description. Stock quantities will be adjusted automatically based on the changes.",
+                "operationId": "updateOrder",
                 "parameters": [
                     {
-                        "name": "orderId",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
+                        "$ref": "#/components/parameters/UpdateOrderId"
                     }
                 ],
                 "requestBody": {
+                    "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
-                                "properties": {
-                                    "status": {
-                                        "type": "string",
-                                        "example": "shipped"
-                                    }
-                                },
-                                "type": "object"
+                                "$ref": "#/components/schemas/UpdateOrderRequest"
                             }
                         }
                     }
                 },
                 "responses": {
                     "200": {
-                        "description": "Order updated successfully"
+                        "description": "Order updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "description": "Empty response body on successful update",
+                                    "type": "object"
+                                }
+                            }
+                        }
                     },
                     "400": {
                         "$ref": "#/components/responses/ValidationError"
@@ -345,12 +198,12 @@
                 "tags": [
                     "Orders"
                 ],
-                "summary": "Delete Order",
-                "description": "Delete order, and products' stock quantities are incremented.",
+                "summary": "Delete an order",
+                "description": "Delete an order and restore the product stock quantities. The order status will be set to 'cancelled' and the order will be soft deleted.",
                 "operationId": "deleteOrder",
                 "parameters": [
                     {
-                        "$ref": "#/components/parameters/orderId"
+                        "$ref": "#/components/parameters/DeleteOrderId"
                     }
                 ],
                 "responses": {
@@ -359,31 +212,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "description": "Empty response on success",
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Order not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Invalid argument provided"
-                                        },
-                                        "error": {
-                                            "type": "string",
-                                            "example": "Order 01HV5R2K3M4N5P6Q7R8S9T0U1V not found"
-                                        },
-                                        "type": {
-                                            "type": "string",
-                                            "example": "invalid_argument"
-                                        }
-                                    },
+                                    "description": "Empty response body on successful deletion",
                                     "type": "object"
                                 }
                             }
@@ -404,9 +233,91 @@
     },
     "components": {
         "schemas": {
+            "OrderResponse": {
+                "properties": {
+                    "id": {
+                        "description": "Order unique identifier",
+                        "type": "string",
+                        "format": "ulid",
+                        "example": "01HV5R2K3M4N5P6Q7R8S9T0U1V"
+                    },
+                    "name": {
+                        "description": "Order name",
+                        "type": "string",
+                        "example": "Urgent delivery"
+                    },
+                    "description": {
+                        "description": "Order description",
+                        "type": "string",
+                        "example": "Order for Mr.Rossi in Catanzaro"
+                    },
+                    "status": {
+                        "description": "Current order status",
+                        "type": "string",
+                        "enum": [
+                            "pending",
+                            "processing",
+                            "shipped",
+                            "delivered",
+                            "cancelled"
+                        ],
+                        "example": "pending"
+                    },
+                    "createdAt": {
+                        "description": "Order creation timestamp",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-15T10:30:00Z"
+                    },
+                    "updatedAt": {
+                        "description": "Order last update timestamp",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-15T15:45:00Z"
+                    },
+                    "orderItems": {
+                        "description": "Order items (included when withDetails=true)",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/OrderItemResponse"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "OrderItemResponse": {
+                "properties": {
+                    "name": {
+                        "description": "Product name",
+                        "type": "string",
+                        "example": "Premium Widget"
+                    },
+                    "quantity": {
+                        "description": "Quantity ordered",
+                        "type": "integer",
+                        "minimum": 1,
+                        "example": 2
+                    },
+                    "createdAt": {
+                        "description": "Order item creation timestamp",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-15T10:30:00Z"
+                    },
+                    "updatedAt": {
+                        "description": "Order item last update timestamp",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-15T10:30:00Z"
+                    }
+                },
+                "type": "object"
+            },
             "CreateOrderRequest": {
                 "required": [
-                    "orderItems"
+                    "orderItems",
+                    "name",
+                    "description"
                 ],
                 "properties": {
                     "orderItems": {
@@ -445,14 +356,69 @@
                     "name": {
                         "description": "Name for the order",
                         "type": "string",
-                        "example": "Urgent delivery",
-                        "nullable": false
+                        "maxLength": 255,
+                        "example": "Urgent delivery"
                     },
                     "description": {
                         "description": "Description for the order",
                         "type": "string",
-                        "example": "Order for Mr.Rossi in Catanzaro",
-                        "nullable": false
+                        "maxLength": 255,
+                        "example": "Order for Mr.Rossi in Catanzaro"
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateOrderRequest": {
+                "required": [
+                    "orderItems",
+                    "name",
+                    "description"
+                ],
+                "properties": {
+                    "orderItems": {
+                        "description": "Array of order items, each containing product ID and quantity",
+                        "type": "array",
+                        "items": {
+                            "type": "array",
+                            "items": {
+                                "oneOf": [
+                                    {
+                                        "description": "Product ULID",
+                                        "type": "string",
+                                        "format": "ulid"
+                                    },
+                                    {
+                                        "description": "Quantity",
+                                        "type": "integer",
+                                        "minimum": 1
+                                    }
+                                ]
+                            },
+                            "maxItems": 2,
+                            "minItems": 2
+                        },
+                        "example": [
+                            [
+                                "01HV5R2K3M4N5P6Q7R8S9T0U1V",
+                                3
+                            ],
+                            [
+                                "01HW6S3L4N5O6P7Q8R9S0T1U2W",
+                                2
+                            ]
+                        ]
+                    },
+                    "name": {
+                        "description": "Updated name for the order",
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "Updated delivery"
+                    },
+                    "description": {
+                        "description": "Updated description for the order",
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "Updated order for Mr.Rossi in Catanzaro"
                     }
                 },
                 "type": "object"
@@ -467,15 +433,15 @@
                             "properties": {
                                 "message": {
                                     "type": "string",
-                                    "example": "Invalid argument provided"
+                                    "example": "The given data was invalid"
                                 },
                                 "error": {
-                                    "description": "Error Message",
-                                    "type": "strinh"
+                                    "description": "Detailed validation errors",
+                                    "type": "object"
                                 },
                                 "type": {
                                     "type": "string",
-                                    "example": "invalid_argument"
+                                    "example": "validation_error"
                                 }
                             },
                             "type": "object"
@@ -491,15 +457,15 @@
                             "properties": {
                                 "message": {
                                     "type": "string",
-                                    "example": "The given data was invalid"
+                                    "example": "Invalid argument provided"
                                 },
                                 "error": {
                                     "type": "string",
-                                    "example": "Product with ID 123 not found"
+                                    "example": "Product with ID 01HV5R2K3M4N5P6Q7R8S9T0U1V not found"
                                 },
                                 "type": {
                                     "type": "string",
-                                    "example": "validation_error"
+                                    "example": "invalid_argument"
                                 }
                             },
                             "type": "object"
@@ -525,15 +491,25 @@
             }
         },
         "parameters": {
-            "orderId": {
+            "DeleteOrderId": {
                 "name": "orderId",
                 "in": "path",
-                "description": "Order ULID identifier",
+                "description": "The unique identifier of the order to delete",
                 "required": true,
                 "schema": {
                     "type": "string",
                     "format": "ulid",
-                    "pattern": "^[0-9A-HJKMNP-TV-Z]{26}$",
+                    "example": "01HV5R2K3M4N5P6Q7R8S9T0U1V"
+                }
+            },
+            "FindOrderId": {
+                "name": "orderId",
+                "in": "path",
+                "description": "The unique identifier of the order",
+                "required": true,
+                "schema": {
+                    "type": "string",
+                    "format": "ulid",
                     "example": "01HV5R2K3M4N5P6Q7R8S9T0U1V"
                 }
             },
@@ -615,6 +591,17 @@
                 "schema": {
                     "type": "boolean",
                     "example": true
+                }
+            },
+            "UpdateOrderId": {
+                "name": "orderId",
+                "in": "path",
+                "description": "The unique identifier of the order to update",
+                "required": true,
+                "schema": {
+                    "type": "string",
+                    "format": "ulid",
+                    "example": "01HV5R2K3M4N5P6Q7R8S9T0U1V"
                 }
             }
         }
