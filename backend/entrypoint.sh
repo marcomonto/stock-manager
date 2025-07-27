@@ -20,6 +20,12 @@ for i in {1..10}; do
     sleep 3
 done
 
+
+
+chown -R www-data:www-data /var/www/html/storage
+chmod -R 775 /var/www/html/storage
+
+
 echo "Optimizing autoload"
 php artisan package:discover --ansi
 
