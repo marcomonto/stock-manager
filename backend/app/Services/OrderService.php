@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use _PHPStan_e7febc360\Nette\InvalidArgumentException;
 use App\Enums\OrderStatus;
 use App\Gateways\CacheGateway;
 use App\Models\Order;
@@ -10,6 +9,7 @@ use App\Models\Product;
 use App\Utils\PaginationOptions;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use InvalidArgumentException;
 
 class OrderService
 {
@@ -208,7 +208,6 @@ class OrderService
         // on same products, very edgy case, but better handle it
         $products = Product::query()
             ->whereIn('id', $productIds)
-            ->orderBy('id')
             ->lockForUpdate()
             ->get()
             ->keyBy('id');

@@ -43,7 +43,7 @@ RUN echo "APP_NAME=StockManager" > .env && \
     echo "LOG_CHANNEL=stack" >> .env && \
     echo "LOG_LEVEL=debug" >> .env
 
-RUN composer install --optimize-autoloader --no-scripts
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader --no-scripts
 
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 775 /var/www/html/storage \

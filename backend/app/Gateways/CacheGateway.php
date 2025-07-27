@@ -2,10 +2,10 @@
 
 namespace App\Gateways;
 
-use _PHPStan_e7febc360\Nette\InvalidArgumentException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use InvalidArgumentException;
 
 class CacheGateway
 {
