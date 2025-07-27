@@ -24,6 +24,23 @@ WORKDIR /var/www/html
 
 COPY . .
 
+RUN echo "APP_NAME=StockManager" > .env && \
+    echo "APP_ENV=local" >> .env && \
+    echo "APP_KEY=base64:K1QpQjYoTX6aHYIen7Go9RrBPwp4gxvCIf/NQtZSY5Y=" >> .env && \
+    echo "APP_DEBUG=true" >> .env && \
+    echo "APP_URL=http://localhost:80" >> .env && \
+    echo "DB_CONNECTION=mysql" >> .env && \
+    echo "DB_HOST=mysql" >> .env && \
+    echo "DB_PORT=3306" >> .env && \
+    echo "DB_DATABASE=stock" >> .env && \
+    echo "DB_USERNAME=stockAdmin" >> .env && \
+    echo "DB_PASSWORD=passwordAdmin" >> .env && \
+    echo "SESSION_DRIVER=database" >> .env && \
+    echo "CACHE_STORE=database" >> .env && \
+    echo "QUEUE_CONNECTION=database" >> .env && \
+    echo "LOG_CHANNEL=stack" >> .env && \
+    echo "LOG_LEVEL=debug" >> .env
+
 RUN composer install --optimize-autoloader --no-scripts
 
 RUN chown -R www-data:www-data /var/www/html \

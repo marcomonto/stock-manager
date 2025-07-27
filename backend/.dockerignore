@@ -15,8 +15,6 @@ storage/framework/testing/*
 storage/framework/views/*
 storage/logs/*
 
-tests/
-coverage/
 .phpunit.result.cache
 .phpunit.cache
 *.log
