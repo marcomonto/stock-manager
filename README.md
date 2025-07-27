@@ -12,7 +12,7 @@ implementa funzionalità di visualizzazione, ricerca avanzata e gestione degli o
 - **Framework**: Laravel 12 (PHP 8.4)
 - **Database**: MySQL 8.0
 - **Containerizzazione**: Docker
-- **Architettura**: Clean Architecture usando Eloquent al posto del Repository pattern,
+- **Architettura**: Clean Architecture usando Eloquent al posto del Repository pattern
 - **Testing**: PHPUnit con Feature Tests
 - **API Documentation**: OpenAPI/Swagger
 - **Caching**: Database-based caching per performance ottimizzate
@@ -71,7 +71,8 @@ http://localhost:81/api/orders?page=1&rowsPerPage=5
 ### 5. Verifica Database
 
 Per vedere il database usato, collegarsi in locale alla porta **3307** con un client sql all'istanza mysql.
-usare pure usr: **stockAdmin** e password: **passwordAdmin**
+
+Usare le credenziali user: **stockAdmin** e password: **passwordAdmin**
 
 ### 6. Test Suite
 
@@ -117,7 +118,7 @@ QUEUE_CONNECTION=database
 
 ### Documentazione Swagger
 
-Una volta avviato il progetto, accedi alla documentazione interattiva:
+Una volta avviato il progetto, accedere alla documentazione interattiva:
 
 - **URL**: `http://localhost:81/api/documentation`
 
@@ -127,7 +128,7 @@ Una volta avviato il progetto, accedi alla documentazione interattiva:
 
 **Gestione delle rotte prodotti**: Le rotte per la gestione dei prodotti non sono state esposte, assumendo che non rientrassero nello scope del dominio del progetto. Tuttavia, grazie all'architettura implementata, l'aggiunta di queste rotte risulta di semplice implementazione. Per la fase di test, è possibile accedere direttamente al database per recuperare gli ID dei prodotti necessari.
 
-**Pattern di persistenza**: È stato preferito l'utilizzo di Eloquent rispetto al repository pattern per sfruttare le comodità offerte dall'ORM. Questa scelta, pur vincolando la logica di dominio a quella di persistenza, si giustifica considerando le dimensioni del progetto e i vantaggi forniti dall'ecosistema Laravel. Per progetti di maggiore complessità, sarebbe opportuno valutare l'adozione del repository pattern.
+**Pattern di persistenza**: È stato preferito l'utilizzo di Eloquent rispetto al repository pattern per sfruttare le comodità offerte dall'ORM. Questa scelta, pur vincolando la logica di dominio a quella di persistenza, si giustifica considerando le dimensioni del progetto e i vantaggi forniti dall'ecosistema Laravel. Per progetti di maggiore complessità, è opportuno valutare l'adozione del repository pattern.
 
 ## Gestione della Concorrenza
 
@@ -147,7 +148,7 @@ Il lock viene acquisito all'inizio della transazione poiché l'unlock avviene au
 
 ## Semplificazioni e Assunzioni
 
-**Status degli ordini**: È stato assunto che lo status dell'ordine sia sempre "delivered", semplificando la logica di business. In futuro sarà possibile implementare flussi diversi basati sui vari stati dell'ordine.
+**Status degli ordini**: È stato assunto che lo status dell'ordine è sempre "delivered", semplificando la logica di business. In futuro sarà possibile implementare flussi diversi basati sui vari stati dell'ordine.
 
 **Controllo attivazione prodotti**: È stato aggiunto un attributo `isActive` per permettere l'attivazione/disattivazione runtime della disponibilità all'acquisto dei prodotti.
 
@@ -167,6 +168,16 @@ Il lock viene acquisito all'inizio della transazione poiché l'unlock avviene au
 
 **Code quality**: È stata implementata una strategia di qualità del codice attraverso due strumenti principali:
 
-**Laravel Pint**: Utilizzato per il code formatting e linting automatico. Il comando è configurato nel composer.json ed eseguibile tramite composer run lint
-**PHPStan**: Implementato per l'analisi statica del codice con un livello di controllo conservativo, facilmente incrementabile per pipeline CI/CD più rigorose. Eseguibile tramite composer run analyse
+- **Laravel Pint**, utilizzato per il code formatting e linting automatico, Il comando è configurato nel composer.json ed è eseguibile tramite composer run lint.
+- **PHPStan**, implementato per l'analisi statica del codice con un livello di controllo conservativo, facilmente incrementabile per pipeline CI/CD più rigorose, è eseguibile tramite composer run analyse.
+## Il bug più fastidioso riscontrato
 
+È stato necessario modificare l'`entrypoint.sh` per implementare un controllo ciclico della connessione MySQL con intervalli di 3 secondi. Nonostante l'utilizzo di `depends_on` nel servizio MySQL, il container dell'applicazione si avviava prima che il database fosse effettivamente pronto ad accettare connessioni.
+
+Il problema principale era che in caso di timeout di connessione, l'applicativo scriveva nei log con privilegi di root, compromettendo i permessi dei file di log. Questo causava errori nelle successive operazioni di logging, poiché il processo PHP-FPM (che gira come `www-data`) non riusciva più a scrivere nei file precedentemente creati da root.
+
+La soluzione ha richiesto:
+1. Implementazione di un wait-loop nell'entrypoint per verificare la disponibilità di MySQL
+2. Reset dei permessi dei file di log assegnandoli a `www-data` con i corretti privilegi di lettura/scrittura
+
+Questo garantisce che l'applicazione si avvii solo quando il database è effettivamente disponibile e mantiene la coerenza dei permessi durante tutto il ciclo di vita del container.
