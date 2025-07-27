@@ -12,13 +12,13 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
-use Mockery;
 
 class OrderCacheTest extends TestCase
 {
     use RefreshDatabase;
 
     protected OrderService $orderService;
+
     protected CacheGateway $cacheGateway;
 
     protected function setUp(): void
@@ -110,7 +110,6 @@ class OrderCacheTest extends TestCase
     {
         Order::factory()->create(['name' => 'Gaming Setup', 'status' => OrderStatus::DELIVERED]);
         Order::factory()->create(['name' => 'Office Setup', 'status' => OrderStatus::DELIVERED]);
-
 
         $result1 = $this->orderService->list(name: 'Gaming');
         $result2 = $this->orderService->list(name: 'Office');
@@ -238,5 +237,4 @@ class OrderCacheTest extends TestCase
         $this->assertFalse(Cache::has($order->id));
         $this->assertFalse(Cache::has("products:{$order->id}"));
     }
-
 }

@@ -40,12 +40,15 @@ class OrderController extends Controller
      *     @OA\Response(
      *         response=200,
      *         description="List of orders retrieved successfully",
+     *
      *         @OA\JsonContent(
      *             type="array",
      *             description="Array of orders",
+     *
      *             @OA\Items(ref="#/components/schemas/OrderResponse")
      *         )
      *     ),
+     *
      *     @OA\Response(response=400, ref="#/components/responses/ValidationError"),
      *     @OA\Response(response=500, ref="#/components/responses/ServerError")
      * )
@@ -79,15 +82,20 @@ class OrderController extends Controller
      *     @OA\Response(
      *         response=200,
      *         description="Order details retrieved successfully",
+     *
      *         @OA\JsonContent(ref="#/components/schemas/OrderResponse")
      *     ),
+     *
      *     @OA\Response(
      *         response=404,
      *         description="Order not found",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="error", type="string", example="Order not found")
      *         )
      *     ),
+     *
      *     @OA\Response(response=400, ref="#/components/responses/ValidationError"),
      *     @OA\Response(response=500, ref="#/components/responses/ServerError")
      * )
@@ -121,17 +129,20 @@ class OrderController extends Controller
      *
      *     @OA\RequestBody(
      *         required=true,
+     *
      *         @OA\JsonContent(ref="#/components/schemas/CreateOrderRequest")
      *     ),
      *
      *     @OA\Response(
      *         response=201,
      *         description="Order created successfully",
+     *
      *         @OA\JsonContent(
      *             type="object",
      *             description="Empty response body on successful creation"
      *         )
      *     ),
+     *
      *     @OA\Response(response=400, ref="#/components/responses/ValidationError"),
      *     @OA\Response(response=422, ref="#/components/responses/InvalidArgument"),
      *     @OA\Response(response=500, ref="#/components/responses/ServerError")
@@ -162,17 +173,20 @@ class OrderController extends Controller
      *
      *     @OA\RequestBody(
      *         required=true,
+     *
      *         @OA\JsonContent(ref="#/components/schemas/UpdateOrderRequest")
      *     ),
      *
      *     @OA\Response(
      *         response=200,
      *         description="Order updated successfully",
+     *
      *         @OA\JsonContent(
      *             type="object",
      *             description="Empty response body on successful update"
      *         )
      *     ),
+     *
      *     @OA\Response(response=400, ref="#/components/responses/ValidationError"),
      *     @OA\Response(response=422, ref="#/components/responses/InvalidArgument"),
      *     @OA\Response(response=500, ref="#/components/responses/ServerError")
@@ -204,11 +218,13 @@ class OrderController extends Controller
      *     @OA\Response(
      *         response=200,
      *         description="Order deleted successfully",
+     *
      *         @OA\JsonContent(
      *             type="object",
      *             description="Empty response body on successful deletion"
      *         )
      *     ),
+     *
      *     @OA\Response(response=400, ref="#/components/responses/ValidationError"),
      *     @OA\Response(response=422, ref="#/components/responses/InvalidArgument"),
      *     @OA\Response(response=500, ref="#/components/responses/ServerError")

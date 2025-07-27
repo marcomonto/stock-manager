@@ -9,16 +9,19 @@ use App\Utils\ValidationPatterns;
  * @OA\Schema(
  *     schema="CreateOrderRequest",
  *     required={"orderItems", "name", "description"},
+ *
  *     @OA\Property(
  *         property="orderItems",
  *         type="array",
  *         description="Array of order items, each containing product ID and quantity",
+ *
  *         @OA\Items(
  *             type="array",
  *             minItems=2,
  *             maxItems=2,
  *             @OA\Items(
  *                 oneOf={
+ *
  *                     @OA\Schema(type="string", format="ulid", description="Product ULID"),
  *                     @OA\Schema(type="integer", minimum=1, description="Quantity")
  *                 }
@@ -29,6 +32,7 @@ use App\Utils\ValidationPatterns;
  *             {"01HW6S3L4N5O6P7Q8R9S0T1U2W", 1}
  *         }
  *     ),
+ *
  *     @OA\Property(
  *         property="name",
  *         type="string",

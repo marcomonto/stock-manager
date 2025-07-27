@@ -13,6 +13,7 @@ namespace App\Http\Controllers;
  *
  *     @OA\Schema(
  *         schema="OrderResponse",
+ *
  *         @OA\Property(
  *             property="id",
  *             type="string",
@@ -57,12 +58,14 @@ namespace App\Http\Controllers;
  *             property="orderItems",
  *             type="array",
  *             description="Order items (included when withDetails=true)",
+ *
  *             @OA\Items(ref="#/components/schemas/OrderItemResponse")
  *         )
  *     ),
  *
  *     @OA\Schema(
  *         schema="OrderItemResponse",
+ *
  *         @OA\Property(
  *             property="name",
  *             type="string",
@@ -95,7 +98,9 @@ namespace App\Http\Controllers;
  *     @OA\Response(
  *         response="ValidationError",
  *         description="Validation error",
+ *
  *         @OA\JsonContent(
+ *
  *             @OA\Property(
  *                 property="message",
  *                 type="string",
@@ -117,7 +122,9 @@ namespace App\Http\Controllers;
  *     @OA\Response(
  *         response="InvalidArgument",
  *         description="Invalid argument provided",
+ *
  *         @OA\JsonContent(
+ *
  *             @OA\Property(
  *                 property="message",
  *                 type="string",
@@ -139,7 +146,9 @@ namespace App\Http\Controllers;
  *     @OA\Response(
  *         response="ServerError",
  *         description="Internal server error",
+ *
  *         @OA\JsonContent(
+ *
  *             @OA\Property(
  *                 property="message",
  *                 type="string",

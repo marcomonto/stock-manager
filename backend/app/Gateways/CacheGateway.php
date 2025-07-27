@@ -9,21 +9,19 @@ use Illuminate\Support\Facades\Log;
 
 class CacheGateway
 {
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
     /**
      * Remember a value in cache with TTL
      */
     public function remember(
-        string   $key,
-        int      $ttl,
+        string $key,
+        int $ttl,
         callable $callback
-    ): mixed
-    {
+    ): mixed {
         return Cache::remember($key, $ttl, function () use ($callback, $key) {
-            Log::info("Cache miss", ['cache_key' => $key]);
+            Log::info('Cache miss', ['cache_key' => $key]);
+
             return $callback();
         });
     }
@@ -41,16 +39,15 @@ class CacheGateway
      */
     public function clearByPrefix(
         string $prefix
-    ): void
-    {
+    ): void {
         $store = Cache::getStore();
         if (method_exists($store, 'getRedis')) {
-            $this->clearRedisByPattern($prefix . '*');
+            $this->clearRedisByPattern($prefix.'*');
         } elseif ($store instanceof \Illuminate\Cache\DatabaseStore) {
             $this->clearDatabaseCacheByPrefix($prefix);
         } else {
-            Log::warning("Using cache flush fallback for unsupported driver", [
-                'driver' => get_class($store)
+            Log::warning('Using cache flush fallback for unsupported driver', [
+                'driver' => get_class($store),
             ]);
             Cache::flush();
         }
@@ -65,12 +62,11 @@ class CacheGateway
         $result = Cache::flush();
 
         if ($result) {
-            Log::info("All cache flushed");
+            Log::info('All cache flushed');
         }
 
         return $result;
     }
-
 
     /**
      * Clear Redis cache entries by pattern
@@ -82,12 +78,12 @@ class CacheGateway
 
             $redis = $store->getRedis();
             $keys = $redis->keys($pattern);
-            if (!empty($keys)) {
+            if (! empty($keys)) {
                 $redis->del($keys);
             }
-            Log::info("Redis cache pattern cleared", [
+            Log::info('Redis cache pattern cleared', [
                 'pattern' => $pattern,
-                'keys_deleted' => count($keys)
+                'keys_deleted' => count($keys),
             ]);
         }
     }
@@ -99,12 +95,9 @@ class CacheGateway
     {
         if (config('cache.default') != 'database') {
             throw new InvalidArgumentException('Cache driver not valid');
-
         }
         DB::table('cache')
-            ->where('key', 'like', $prefix . '%')
+            ->where('key', 'like', $prefix.'%')
             ->delete();
     }
-
-
 }

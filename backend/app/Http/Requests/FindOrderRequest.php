@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Dtos\FindOrderDto;
 use App\Utils\ValidationPatterns;
+
 /**
  * @OA\Parameter(
  *     parameter="FindOrderId",
@@ -11,6 +12,7 @@ use App\Utils\ValidationPatterns;
  *     in="path",
  *     required=true,
  *     description="The unique identifier of the order",
+ *
  *     @OA\Schema(
  *         type="string",
  *         format="ulid",
@@ -24,6 +26,7 @@ use App\Utils\ValidationPatterns;
  *     in="query",
  *     required=false,
  *     description="Include detailed order information with related items",
+ *
  *     @OA\Schema(
  *         type="boolean",
  *         example=true,

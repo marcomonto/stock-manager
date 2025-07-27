@@ -12,6 +12,7 @@ use App\Utils\ValidationPatterns;
  *     in="path",
  *     required=true,
  *     description="The unique identifier of the order to delete",
+ *
  *     @OA\Schema(
  *         type="string",
  *         format="ulid",

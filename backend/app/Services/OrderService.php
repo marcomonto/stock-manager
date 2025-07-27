@@ -15,22 +15,21 @@ class OrderService
 {
     public function __construct(
         protected CacheGateway $cacheGateway,
-    )
-    {
-
-    }
+    ) {}
 
     private const int CACHE_TTL_SINGLE = 7200;
+
     private const int CACHE_TTL_LIST = 600;
+
     private const string CACHE_PREFIX = 'orders:';
+
     private const string CACHE_LIST_PREFIX = 'orders:list:';
 
     public function create(
-        array  $orderItems,
+        array $orderItems,
         string $name,
         string $description,
-    ): Order
-    {
+    ): Order {
         $itemsToAttach = $this->checkOrderItems($orderItems);
 
         $order = Order::query()
@@ -43,17 +42,17 @@ class OrderService
         $order->products()->attach($itemsToAttach);
 
         $this->invalidateOrderCaches($order->id);
+
         return $order;
     }
 
     public function update(
-        Order  $order,
-        array  $orderItems,
+        Order $order,
+        array $orderItems,
         string $name,
         string $description,
-    ): Order
-    {
-        if (!$order->canBeModified()) {
+    ): Order {
+        if (! $order->canBeModified()) {
             throw new InvalidArgumentException('Order cannot be modified in current status');
         }
 
@@ -83,13 +82,13 @@ class OrderService
     }
 
     public function list(
-        ?string            $name = null,
-        ?string            $description = null,
-        ?\DateTime         $creationDate = null,
+        ?string $name = null,
+        ?string $description = null,
+        ?\DateTime $creationDate = null,
         ?PaginationOptions $paginationOptions = null,
-    ): Collection
-    {
+    ): Collection {
         $cacheKey = $this->generateListCacheKey($name, $description, $creationDate, $paginationOptions);
+
         return $this->cacheGateway->remember($cacheKey, self::CACHE_TTL_LIST, function () use ($name, $description, $creationDate, $paginationOptions) {
             return $this->executeListQuery($name, $description, $creationDate, $paginationOptions);
         });
@@ -97,7 +96,7 @@ class OrderService
 
     public function find(string $id): Order
     {
-        $cacheKey = self::CACHE_PREFIX . $id;
+        $cacheKey = self::CACHE_PREFIX.$id;
         $order = $this->cacheGateway->remember($cacheKey, self::CACHE_TTL_SINGLE,
             function () use ($id) {
                 return Order::query()
@@ -105,7 +104,7 @@ class OrderService
                     ->first();
             });
 
-        if (!$order) {
+        if (! $order) {
             throw new InvalidArgumentException("Order {$id} not found");
         }
 
@@ -114,7 +113,8 @@ class OrderService
 
     public function get(string $id): ?Order
     {
-        $cacheKey = self::CACHE_PREFIX . $id;
+        $cacheKey = self::CACHE_PREFIX.$id;
+
         return $this->cacheGateway
             ->remember($cacheKey, self::CACHE_TTL_SINGLE, function () use ($id) {
                 return Order::query()
@@ -129,7 +129,7 @@ class OrderService
     protected function invalidateOrderCaches(string $orderId): void
     {
         $this->cacheGateway->forget(
-            self::CACHE_PREFIX . $orderId
+            self::CACHE_PREFIX.$orderId
         );
         $this->cacheGateway->clearByPrefix(
             self::CACHE_LIST_PREFIX
@@ -140,19 +140,18 @@ class OrderService
      * Generate cache key for list operations
      */
     protected function generateListCacheKey(
-        ?string            $name,
-        ?string            $description,
-        ?\DateTime         $creationDate,
+        ?string $name,
+        ?string $description,
+        ?\DateTime $creationDate,
         ?PaginationOptions $paginationOptions
-    ): string
-    {
+    ): string {
         $keyParts = [
             self::CACHE_LIST_PREFIX,
-            'name:' . ($name ?? 'null'),
-            'desc:' . ($description ?? 'null'),
-            'date:' . ($creationDate ? $creationDate->format('Y-m-d') : 'null'),
-            'page:' . ($paginationOptions?->page ?? 'null'),
-            'per_page:' . ($paginationOptions?->rowsPerPage ?? 'null'),
+            'name:'.($name ?? 'null'),
+            'desc:'.($description ?? 'null'),
+            'date:'.($creationDate ? $creationDate->format('Y-m-d') : 'null'),
+            'page:'.($paginationOptions?->page ?? 'null'),
+            'per_page:'.($paginationOptions?->rowsPerPage ?? 'null'),
         ];
 
         return implode(':', $keyParts);
@@ -162,18 +161,17 @@ class OrderService
      * Execute the list query (extracted for reusability)
      */
     protected function executeListQuery(
-        ?string            $name,
-        ?string            $description,
-        ?\DateTime         $creationDate,
+        ?string $name,
+        ?string $description,
+        ?\DateTime $creationDate,
         ?PaginationOptions $paginationOptions
-    ): Collection
-    {
+    ): Collection {
         $query = Order::query();
         if ($name) {
-            $query->where('name', 'like', '%' . $name . '%');
+            $query->where('name', 'like', '%'.$name.'%');
         }
         if ($description) {
-            $query->where('description', 'like', '%' . $description . '%');
+            $query->where('description', 'like', '%'.$description.'%');
         }
         if ($creationDate) {
             $query->whereDate('created_at', $creationDate->format('Y-m-d'));
@@ -198,10 +196,6 @@ class OrderService
         }
     }
 
-    /**
-     * @param array $orderItems
-     * @return array
-     */
     protected function checkOrderItems(array $orderItems): array
     {
         $productIds = collect($orderItems)
@@ -224,23 +218,24 @@ class OrderService
         foreach ($orderItems as [$productId, $quantity]) {
             $product = $products->get($productId);
 
-            if (!$product) {
+            if (! $product) {
                 throw new InvalidArgumentException("Product not present with given id: $productId");
             }
 
-            if (!$product->is_active) {
+            if (! $product->is_active) {
                 throw new InvalidArgumentException("Product $product->name not active");
             }
 
             if ($product->stock_quantity < $quantity) {
                 throw new InvalidArgumentException("Insufficient Quantity for $product->name");
             }
-            if (!empty($itemsToAttach[$productId])) {
+            if (! empty($itemsToAttach[$productId])) {
                 throw new InvalidArgumentException('Multiple products with same id');
             }
             $product->decrement('stock_quantity', $quantity);
             $itemsToAttach[$productId] = ['quantity' => $quantity];
         }
+
         return $itemsToAttach;
     }
 }

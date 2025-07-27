@@ -5,17 +5,13 @@ namespace App\Dtos;
 readonly class CreateOrderDto implements Dto
 {
     /**
-     * @param array<int, array{string, int}> $orderItems Array di tuple [productId, quantity]
-     * @param string $name
-     * @param string $description
+     * @param  array<int, array{string, int}>  $orderItems  Array di tuple [productId, quantity]
      */
     public function __construct(
-        public array  $orderItems,
+        public array $orderItems,
         public string $name,
         public string $description,
-    )
-    {
-    }
+    ) {}
 
     /**
      * @return array{orderItems: array<int, array{string, int}>, name: string, description: string}
