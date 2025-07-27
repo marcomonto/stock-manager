@@ -12,7 +12,9 @@ RUN apt-get update && apt-get install -y \
     unzip \
     libzip-dev \
     supervisor \
-    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
+    libicu-dev \
+    && docker-php-ext-configure intl \
+    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip intl
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
@@ -44,8 +46,8 @@ RUN echo "APP_NAME=StockManager" > .env && \
 RUN composer install --optimize-autoloader --no-scripts
 
 RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html/storage \
-    && chmod -R 755 /var/www/html/bootstrap/cache \
+    && chmod -R 775 /var/www/html/storage \
+    && chmod -R 775 /var/www/html/bootstrap/cache \
     && chmod 755 ./entrypoint.sh
 
 EXPOSE 80 443

@@ -58,6 +58,7 @@ return Application::configure(basePath: dirname(__DIR__))
         });
 
         $exceptions->render(function (\Exception $e, Request $request) {
+            \Illuminate\Support\Facades\Log::error($e->getMessage());
             return response()->json([
                 'message' => 'Internal server error',
             ], 500);

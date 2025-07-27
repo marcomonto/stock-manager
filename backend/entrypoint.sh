@@ -1,6 +1,25 @@
 #!/bin/bash
 set -e
 
+echo "Checking database connection..."
+for i in {1..10}; do
+    echo "Database connection attempt $i/10"
+    if php artisan db:show > /dev/null 2>&1; then
+        echo "✅ Database connected!"
+        break
+    fi
+
+    if [ $i -eq 10 ]; then
+        echo "❌ Failed to connect to database after 10 attempts"
+        echo "Database Host: ${DB_HOST:-not_set}"
+        echo "Database Name: ${DB_DATABASE:-not_set}"
+        exit 1
+    fi
+
+    echo "Database not ready, waiting 3 seconds..."
+    sleep 3
+done
+
 echo "Optimizing autoload"
 php artisan package:discover --ansi
 
