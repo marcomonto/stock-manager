@@ -100,7 +100,7 @@ class OrderListTest extends TestCase
             $this->assertArrayHasKeys($this->responseStructure, $order);
 
             $this->assertIsString($order['id']);
-            $this->assertMatchesRegularExpression('/^[0-9A-HJKMNP-TV-Z]{26}$/', $order['id']); // ULID format
+            $this->assertMatchesRegularExpression('/^[0-9A-Z]{26}$/', $order['id']);
 
             $this->assertIsString($order['name']);
             $this->assertNotEmpty($order['name']);

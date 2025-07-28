@@ -20,6 +20,7 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->timestamps();
             $table->softDeletes();
+            $table->index('created_at');
         });
 
         Schema::create('orders', function (Blueprint $table) {
@@ -33,6 +34,7 @@ return new class extends Migration
             )->default(OrderStatus::PENDING->value)->index();
             $table->timestamps();
             $table->softDeletes();
+            $table->index('created_at');
         });
 
         Schema::create('order_items', function (Blueprint $table) {

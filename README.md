@@ -169,7 +169,7 @@ Il lock viene acquisito all'inizio della transazione poiché l'unlock avviene au
 **Code quality**: È stata implementata una strategia di qualità del codice attraverso due strumenti principali:
 
 - **Laravel Pint**, utilizzato per il code formatting e linting automatico, Il comando è configurato nel composer.json ed è eseguibile tramite composer run lint.
-- **PHPStan**, implementato per l'analisi statica del codice con un livello di controllo conservativo, facilmente incrementabile per pipeline CI/CD più rigorose, è eseguibile tramite composer run analyse.
+- **PHPStan**, implementato per l'analisi statica del codice con un livello di controllo conservativo, facilmente incrementabile attraverso l'opzione --level per pipeline CI/CD più rigorose, è eseguibile tramite composer run analyse.
 ## Il bug più fastidioso riscontrato
 
 È stato necessario modificare l'`entrypoint.sh` per implementare un controllo ciclico della connessione MySQL con intervalli di 3 secondi. Nonostante l'utilizzo di `depends_on` nel servizio MySQL, il container dell'applicazione si avviava prima che il database fosse effettivamente pronto ad accettare connessioni.
